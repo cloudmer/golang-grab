@@ -33,7 +33,7 @@ func SendMail(logstr , body string)  {
 	for i := range addressee {
 		m.SetAddressHeader("From", addresser, addresserName)
 		m.SetAddressHeader("To", addressee[i].Address, "")
-		m.SetHeader("Subject", "机房提醒")
+		m.SetHeader("Subject", "机房提醒-[新]")
 		m.SetBody("text/html", body)
 		if err := gomail.Send(s, m); err != nil {
 			log.Println(logstr, "邮件发送失败:", err)
