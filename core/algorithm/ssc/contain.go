@@ -43,7 +43,6 @@ type code struct {
 func init()  {
 	newCodes = new(code)
 	newCodes.codes = make(map[int]string)
-	fmt.Println("我不知道会得到什么", newCodes.Get(1))
 }
 
 //时时彩
