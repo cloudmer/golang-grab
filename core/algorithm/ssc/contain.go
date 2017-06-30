@@ -29,18 +29,8 @@ var contain_tw_data []*model.Twssc
 //彩票类型
 var contain_ssc_type map[int]string
 
-//重庆时时彩 最新开奖号
-var cq_ssc_new_code string
-
-//天津时时彩 最新开奖号
-var tj_ssc_new_code string
-
-//新疆时时彩 最新开奖号
-var xj_ssc_new_code string
-
-//台湾五分彩 最新开奖号
-var tw_ssc_new_code string
-
+//时时彩 最新开奖号码 包id => 对应彩种开奖号码
+var ssc_new_code map[int]string = make(map[int]string, 0)
 
 //时时彩
 //包含数据包 算法
@@ -78,7 +68,7 @@ func containAnalysis()  {
 }
 
 func containAnalysisCodes(packet *model.Packet)  {
-	log.Println("时时彩－包含数据包 正在分析　数据包别名:", packet.Alias, "彩种:", contain_ssc_type[packet.Type])
+	log.Println(contain_ssc_type[packet.Type], "时时彩－包含数据包 正在分析　数据包别名:", packet.Alias)
 	slice_dataTxt := strings.Split(packet.DataTxt, "\r\n")
 	//slice data txt to slice data txt map
 	dataTxtMap := make(map[string]string)
@@ -102,8 +92,8 @@ func containAnalysisCodes(packet *model.Packet)  {
 		//检查 该彩种到最新的一起 是否重复分析
 		if len(contain_cq_data) > 0 {
 			new_code := contain_cq_data[len(contain_cq_data) - 1].One + contain_cq_data[len(contain_cq_data) - 1].Two + contain_cq_data[len(contain_cq_data) - 1].Three + contain_cq_data[len(contain_cq_data) - 1].Four + contain_cq_data[len(contain_cq_data) - 1].Five
-			if new_code == cq_ssc_new_code {
-				log.Println(contain_ssc_type[packet.Type], "最新的一期 已经分析过了... 等待出现新的开奖号")
+			if v, ok := ssc_new_code[packet.Id]; ok && v == new_code {
+				log.Println(contain_ssc_type[packet.Type], "数据包别名:", packet.Alias, "最新的一期 已经分析过了... 等待出现新的开奖号")
 				return
 			}
 		}
@@ -112,7 +102,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 			code := contain_cq_data[i].One + contain_cq_data[i].Two + contain_cq_data[i].Three + contain_cq_data[i].Four +contain_cq_data[i].Five
 			codes = append(codes, code)
 			//刷新该彩种的最新开奖号
-			cq_ssc_new_code = code
+			ssc_new_code[packet.Id] = code
 		}
 	}
 	//天津时时彩
@@ -120,8 +110,8 @@ func containAnalysisCodes(packet *model.Packet)  {
 		//检查 该彩种到最新的一起 是否重复分析
 		if len(contain_tj_data) > 0 {
 			new_code := contain_tj_data[len(contain_tj_data) - 1].One + contain_tj_data[len(contain_tj_data) - 1].Two + contain_tj_data[len(contain_tj_data) - 1].Three + contain_tj_data[len(contain_tj_data) - 1].Four + contain_tj_data[len(contain_tj_data) - 1].Five
-			if new_code == tj_ssc_new_code {
-				log.Println(contain_ssc_type[packet.Type], "最新的一期 已经分析过了... 等待出现新的开奖号")
+			if v, ok := ssc_new_code[packet.Id]; ok && v == new_code {
+				log.Println(contain_ssc_type[packet.Type], "数据包别名:", packet.Alias, "最新的一期 已经分析过了... 等待出现新的开奖号")
 				return
 			}
 		}
@@ -130,7 +120,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 			code := contain_tj_data[i].One + contain_tj_data[i].Two + contain_tj_data[i].Three + contain_tj_data[i].Four +contain_tj_data[i].Five
 			codes = append(codes, code)
 			//刷新该彩种的最新开奖号
-			tj_ssc_new_code = code
+			ssc_new_code[packet.Id] = code
 		}
 	}
 	//新疆时时彩
@@ -138,8 +128,8 @@ func containAnalysisCodes(packet *model.Packet)  {
 		//检查 该彩种到最新的一起 是否重复分析
 		if len(contain_xj_data) > 0 {
 			new_code := contain_xj_data[len(contain_xj_data) - 1].One + contain_xj_data[len(contain_xj_data) - 1].Two + contain_xj_data[len(contain_xj_data) - 1].Three + contain_xj_data[len(contain_xj_data) - 1].Four + contain_xj_data[len(contain_xj_data) - 1].Five
-			if new_code == xj_ssc_new_code {
-				log.Println(contain_ssc_type[packet.Type], "最新的一期 已经分析过了... 等待出现新的开奖号")
+			if v, ok := ssc_new_code[packet.Id]; ok && v == new_code {
+				log.Println(contain_ssc_type[packet.Type], "数据包别名:", packet.Alias, "最新的一期 已经分析过了... 等待出现新的开奖号")
 				return
 			}
 		}
@@ -148,7 +138,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 			code := contain_xj_data[i].One + contain_xj_data[i].Two + contain_xj_data[i].Three + contain_xj_data[i].Four +contain_xj_data[i].Five
 			codes = append(codes, code)
 			//刷新该彩种的最新开奖号
-			xj_ssc_new_code = code
+			ssc_new_code[packet.Id] = code
 		}
 	}
 	//台湾时时彩
@@ -156,8 +146,8 @@ func containAnalysisCodes(packet *model.Packet)  {
 		//检查 该彩种到最新的一起 是否重复分析
 		if len(contain_tw_data) > 0 {
 			new_code := contain_tw_data[len(contain_tw_data) - 1].One + contain_tw_data[len(contain_tw_data) - 1].Two + contain_tw_data[len(contain_tw_data) - 1].Three + contain_tw_data[len(contain_tw_data) - 1].Four + contain_tw_data[len(contain_tw_data) - 1].Five
-			if new_code == tw_ssc_new_code {
-				log.Println(contain_ssc_type[packet.Type], "最新的一期 已经分析过了... 等待出现新的开奖号")
+			if v, ok := ssc_new_code[packet.Id]; ok && v == new_code {
+				log.Println(contain_ssc_type[packet.Type], "数据包别名:", packet.Alias, "最新的一期 已经分析过了... 等待出现新的开奖号")
 				return
 			}
 		}
@@ -166,7 +156,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 			code := contain_tw_data[i].One + contain_tw_data[i].Two + contain_tw_data[i].Three + contain_tw_data[i].Four +contain_tw_data[i].Five
 			codes = append(codes, code)
 			//刷新该彩种的最新开奖号
-			tw_ssc_new_code = code
+			ssc_new_code[packet.Id] = code
 		}
 	}
 
