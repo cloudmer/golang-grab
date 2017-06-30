@@ -291,12 +291,12 @@ func containAnalysisCodes(packet *model.Packet)  {
 
 	//中三报警
 	if z3_number >= packet.RegretNumber {
-		body += "<div> 彩种: " + contain_ssc_type[packet.Type] + " 数据包别名: " + packet.Alias + " 位置 中三 " + strconv.Itoa(q3_number) + " 期 报警！</div><br/>"
+		body += "<div> 彩种: " + contain_ssc_type[packet.Type] + " 数据包别名: " + packet.Alias + " 位置 中三 " + strconv.Itoa(z3_number) + " 期 报警！</div><br/>"
 	}
 
 	//后三报警
 	if h3_number >= packet.RegretNumber {
-		body += "<div> 彩种: " + contain_ssc_type[packet.Type] + " 数据包别名: " + packet.Alias + " 位置 后三 " + strconv.Itoa(q3_number) + " 期 报警！</div><br/>"
+		body += "<div> 彩种: " + contain_ssc_type[packet.Type] + " 数据包别名: " + packet.Alias + " 位置 后三 " + strconv.Itoa(h3_number) + " 期 报警！</div><br/>"
 	}
 
 	//发送邮件
