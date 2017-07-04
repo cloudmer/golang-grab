@@ -11,9 +11,9 @@ type Cqssc struct {
 	Time  int
 }
 
-func (model *Cqssc) Query() []*Cqssc {
+func (model *Cqssc) Query(limit string) []*Cqssc {
 	sql_str := `SELECT * FROM (
-					SELECT id,qishu,one,two,three,four,five,time FROM cqssc  ORDER BY time DESC LIMIT 300
+					SELECT id,qishu,one,two,three,four,five,time FROM cqssc  ORDER BY time DESC LIMIT ` + limit + `
 				) AS ssc ORDER BY time ASC`
 	rows, err := DB.Query(sql_str)
 	defer rows.Close()

@@ -11,9 +11,9 @@ type Twssc struct {
 	Time  int
 }
 
-func (model *Twssc) Query() []*Twssc {
+func (model *Twssc) Query(limit string) []*Twssc {
 	sql_str := `SELECT * FROM (
-					SELECT id,qishu,one,two,three,four,five,time FROM bjssc  ORDER BY time DESC LIMIT 300
+					SELECT id,qishu,one,two,three,four,five,time FROM bjssc  ORDER BY time DESC LIMIT ` + limit + `
 				) AS ssc ORDER BY time ASC`
 	rows, err := DB.Query(sql_str)
 	defer rows.Close()

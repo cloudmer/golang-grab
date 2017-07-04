@@ -18,6 +18,8 @@ func main(){
 			//todo
 			// 时时彩　包含数据包　算法　邮件报警
 			go ssc.Contain()
+			//时时彩 连号 算法 邮件报警
+			go ssc.Consecutive()
 		}
 	}
 }
