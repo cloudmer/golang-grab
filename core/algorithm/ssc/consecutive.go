@@ -335,6 +335,9 @@ func consecutiveCodesAnalyse(codes []string, position string, cpName string) (st
 		if isSix == false {
 			log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 不是组6 [不管] 期数 = " + strconv.Itoa(number)
 			//不是组6 跳出本次循环
+
+			//当前轮循完 刷新下一期的 参考对象
+			reference = reference_current_obj
 			continue
 		}
 
