@@ -7,9 +7,18 @@ import (
 	"strconv"
 	"log"
 	"xmn/core/logger"
+	"time"
 )
 
 func SendMail(logstr , body string)  {
+	defer func(logs, by string) {
+		if err := recover(); err != nil {
+			//panic: dial tcp 220.181.12.15:25: i/o timeout
+			//连接超时 错误处理 休眠几秒 继续发送邮件,直到发送成功 递归发送
+			time.Sleep(3 * time.Second)
+			go SendMail(logs, by)
+		}
+	}(logstr, body)
 	//发件人
 	addresser := config.Read("mail", "addresser")
 	addresserName := config.Read("mail", "addresserName")
