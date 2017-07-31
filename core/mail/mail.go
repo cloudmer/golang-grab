@@ -16,6 +16,7 @@ func SendMail(logstr , body string)  {
 			//panic: dial tcp 220.181.12.15:25: i/o timeout
 			//连接超时 错误处理 休眠几秒 继续发送邮件,直到发送成功
 			logger.Log(logstr + " 邮件发送失败: 可能是 tcp i/p timeout, 3 秒后重新发送,递归处理")
+			log.Println(err)
 			time.Sleep(3 * time.Second)
 			go SendMail(logs, by)
 		}
