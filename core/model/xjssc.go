@@ -35,3 +35,14 @@ func (model *Xjssc) Query(limit string) []*Xjssc {
 	}
 	return  data
 }
+
+//获取最新一期的开奖号码
+func (model *Xjssc) GetNesCode() (string, error) {
+	str_sql := `SELECT one,two,three,four,five FROM xjssc ORDER BY time DESC LIMIT 1;`
+	xj := new(Xjssc)
+	err := DB.QueryRow(str_sql).Scan(&xj.One, &xj.Two, &xj.Three, &xj.Four, &xj.Five)
+	if err != nil {
+		return "", err
+	}
+	return xj.One + xj.Two + xj.Three + xj.Four + xj.Five, err
+}

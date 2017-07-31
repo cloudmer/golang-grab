@@ -11,6 +11,8 @@ type Packet struct {
 	State        int
 	Type         int
 	Time         int
+	Cycle        int
+	CycleNumber  int
 }
 
 func (model *Packet) Query() []*Packet {
@@ -27,7 +29,7 @@ func (model *Packet) Query() []*Packet {
 	for rows.Next() {
 		rows.Columns()
 		packet := new(Packet)
-		err := rows.Scan(&packet.Id, &packet.Alias, &packet.DataTxt, &packet.Start, &packet.End, &packet.RegretNumber, &packet.Forever, &packet.Start, &packet.Type, &packet.Time)
+		err := rows.Scan(&packet.Id, &packet.Alias, &packet.DataTxt, &packet.Start, &packet.End, &packet.RegretNumber, &packet.Forever, &packet.Start, &packet.Type, &packet.Time, &packet.Cycle, &packet.CycleNumber)
 		if err != nil {
 			panic(err.Error())
 		}

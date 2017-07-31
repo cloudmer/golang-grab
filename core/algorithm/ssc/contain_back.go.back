@@ -189,21 +189,6 @@ func containAnalysisCodes(packet *model.Packet)  {
 	var q3_reference bool = false
 	var z3_reference bool = false
 	var h3_reference bool = false
-
-	var q3_html_log string = ""
-	var z3_html_log string = ""
-	var h3_html_log string = ""
-
-	//周期计数器 自定义周期 一清零
-	var q3_cycle int = 0
-	var z3_cycle int = 0
-	var h3_cycle int = 0
-
-	//周期报警计数器
-	var q3_cycle_number int = 0
-	var z3_cycle_number int = 0
-	var h3_cycle_number int = 0
-
 	for i := range codes{
 		code_byte := []byte(codes[i])
 		//前三号码
@@ -234,128 +219,30 @@ func containAnalysisCodes(packet *model.Packet)  {
 		//前三没有上一期 开奖数据 参考对象 and 前三出现在数据包里
 		if !q3_reference && q3_in {
 			q3_number = q3_number + 1
-			q3_cycle += 1
-			q3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 前三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + q3 +"</div>"
-			q3_html_log += "<div>没有基准 并且 当前号码在数据包内 +1 = " + strconv.Itoa(q3_number) + "</div>"
-			q3_html_log += "<div>当期自定义连续 "+ strconv.Itoa(packet.Cycle) +" 期 未开为1周期,  计算是否满1周的值累加到 = " + strconv.Itoa(q3_cycle) + "</div>"
-
-			//检查是否满1周期
-			if q3_cycle == packet.Cycle {
-				q3_cycle_number += 1
-				q3_cycle = 0
-				q3_html_log += "<div>[前三 当期满自定义一周期, 周期报警计数 +1 = "+ strconv.Itoa(q3_cycle_number) +"]</div>"
-				q3_html_log += "<div>1周期已满, 重新计算连续未开是否满1周期 累计值当前为0</div>"
-			}
-			q3_html_log += "<br/>"
 			//fmt.Println(contain_ssc_type[packet.Type], "q3", q3, "+1=", q3_number)
 		} else if q3_reference && q3_in  {
 			//前三有上一期 开奖数据 参考对象 and 前三出现在数据包里
 			q3_number = 0
 			q3_number = q3_number + 1
-			q3_cycle = 0
-			q3_cycle = q3_cycle + 1
-			q3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 前三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + q3 +"</div>"
-			q3_html_log += "<div>有基准 并且 当前号码在数据包内 清零 再 +1 = " + strconv.Itoa(q3_number) + "</div>"
-			q3_html_log += "<div>计算是否满1周期 的 计数器 清零 再 +1 = " + strconv.Itoa(q3_cycle) + "</div>"
-			//检查是否满1周期
-			if q3_cycle == packet.Cycle {
-				q3_cycle_number += 1
-				q3_cycle = 0
-				q3_html_log += "<div>[前三 当期满自定义一周期, 周期报警计数 +1 = "+ strconv.Itoa(q3_cycle_number) +"]</div>"
-				q3_html_log += "<div>1周期已满, 重新计算连续未开是否满1周期 累计值当前为0</div>"
-			}
-			q3_html_log += "<br/>"
 			//fmt.Println(contain_ssc_type[packet.Type], "q3", q3, "清0 +1=", q3_number)
-		} else if !q3_reference && !q3_in {
-			q3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 前三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + q3 +"</div>"
-			q3_html_log += "<div>没有基准 并且 当前号码不在数据包内 [不管]"+ "</div></br>"
-		} else if q3_reference && !q3_in {
-			q3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 前三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + q3 +"</div>"
-			q3_html_log += "<div>有基准 并且 当前号码不在数据包内 [不管]"+ "</div></br>"
 		}
 
 		//中三没有上一期 开奖数据 参考对象 and 中三出现在数据包里
 		if !z3_reference && z3_in {
 			z3_number = z3_number + 1
-			z3_cycle += 1
-			z3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 中三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + z3 +"</div>"
-			z3_html_log += "<div>没有基准 并且 当前号码在数据包内 +1 = " + strconv.Itoa(z3_number) + "</div>"
-			z3_html_log += "<div>当期自定义连续 "+ strconv.Itoa(packet.Cycle) +" 期 未开为1周期,  计算是否满1周的值累加到 = " + strconv.Itoa(z3_cycle) + "</div>"
-
-			//检查是否满1周期
-			if z3_cycle == packet.Cycle {
-				z3_cycle_number += 1
-				z3_cycle = 0
-				z3_html_log += "<div>[中三 当期满自定义一周期, 周期报警计数 +1 = "+ strconv.Itoa(z3_cycle_number) +"]</div>"
-				z3_html_log += "<div>1周期已满, 重新计算连续未开是否满1周期 累计值当前为0</div>"
-			}
-			z3_html_log += "<br/>"
 		} else if z3_reference && z3_in  {
 			//中三有上一期 开奖数据 参考对象 and 中三出现在数据包里
 			z3_number = 0
 			z3_number = z3_number + 1
-			z3_cycle = 0
-			z3_cycle = z3_cycle + 1
-			z3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 中三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + z3 +"</div>"
-			z3_html_log += "<div>有基准 并且 当前号码在数据包内 清零 再 +1 = " + strconv.Itoa(z3_number) + "</div>"
-			z3_html_log += "<div>计算是否满1周期 的 计数器 清零 再 +1 = " + strconv.Itoa(z3_cycle) + "</div>"
-
-			//检查是否满1周期
-			if z3_cycle == packet.Cycle {
-				z3_cycle_number += 1
-				z3_cycle = 0
-				z3_html_log += "<div>[中三 当期满自定义一周期, 周期报警计数 +1 = "+ strconv.Itoa(z3_cycle_number) +"]</div>"
-				z3_html_log += "<div>1周期已满, 重新计算连续未开是否满1周期 累计值当前为0</div>"
-			}
-			z3_html_log += "<br/>"
-		} else if !z3_reference && !z3_in {
-			z3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 中三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + z3 +"</div>"
-			z3_html_log += "<div>没有基准 并且 当前号码不在数据包内 [不管]"+ "</div></br>"
-		} else if z3_reference && !z3_in {
-			z3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 中三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + z3 +"</div>"
-			z3_html_log += "<div>有基准 并且 当前号码不在数据包内 [不管]"+ "</div></br>"
 		}
 
 		//后三没有上一期 开奖数据 参考对象 and 后三出现在数据包里
 		if !h3_reference && h3_in {
 			h3_number = h3_number + 1
-			h3_cycle += 1
-			h3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 后三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + h3 +"</div>"
-			h3_html_log += "<div>没有基准 并且 当前号码在数据包内 +1 = " + strconv.Itoa(h3_number) + "</div>"
-			h3_html_log += "<div>当期自定义连续 "+ strconv.Itoa(packet.Cycle) +" 期 未开为1周期,  计算是否满1周的值累加到 = " + strconv.Itoa(h3_cycle) + "</div>"
-
-			//检查是否满1周期
-			if h3_cycle == packet.Cycle {
-				h3_cycle_number += 1
-				h3_cycle = 0
-				h3_html_log += "<div>[后三 当期满自定义一周期, 周期报警计数 +1 = "+ strconv.Itoa(h3_cycle_number) +"]</div>"
-				h3_html_log += "<div>1周期已满, 重新计算连续未开是否满1周期 累计值当前为0</div>"
-			}
-			z3_html_log += "<br/>"
 		} else if h3_reference && h3_in  {
 			//后三有上一期 开奖数据 参考对象 and 后三出现在数据包里
 			h3_number = 0
 			h3_number = h3_number + 1
-			h3_cycle = 0
-			h3_cycle = h3_cycle + 1
-			h3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 后三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + h3 +"</div>"
-			h3_html_log += "<div>有基准 并且 当前号码在数据包内 清零 再 +1 = " + strconv.Itoa(h3_number) + "</div>"
-			h3_html_log += "<div>计算是否满1周期 的 计数器 清零 再 +1 = " + strconv.Itoa(h3_cycle) + "</div>"
-
-			//检查是否满1周期
-			if h3_cycle == packet.Cycle {
-				h3_cycle_number += 1
-				h3_cycle = 0
-				h3_html_log += "<div>[后三 当期满自定义一周期, 周期报警计数 +1 = "+ strconv.Itoa(h3_cycle_number) +"]</div>"
-				h3_html_log += "<div>1周期已满, 重新计算连续未开是否满1周期 累计值当前为0</div>"
-			}
-			h3_html_log += "<br/>"
-		} else if !h3_reference && !h3_in {
-			h3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 后三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + h3 +"</div>"
-			h3_html_log += "<div>没有基准 并且 当前号码不在数据包内 [不管]"+ "</div></br>"
-		} else if h3_reference && !h3_in {
-			h3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 后三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + h3 +"</div>"
-			h3_html_log += "<div>有基准 并且 当前号码不在数据包内 [不管]"+ "</div></br>"
 		}
 
 		//前三参考对象
@@ -395,12 +282,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 	//fmt.Println(contain_ssc_type[packet.Type], "z3 期数", z3_number)
 	//fmt.Println(contain_ssc_type[packet.Type], "h3 期数", h3_number)
 
-	//fmt.Println(q3_html_log)
-	//fmt.Println(z3_html_log)
-	//fmt.Println(h3_html_log)
-
 	var body string = ""
-	var cycle_body string = ""
 
 	//前三报警
 	if q3_number >= packet.RegretNumber {
@@ -420,29 +302,6 @@ func containAnalysisCodes(packet *model.Packet)  {
 	//发送邮件
 	if body != "" {
 		go mail.SendMail(contain_ssc_type[packet.Type] + " 包含数据包", body)
-	}
-
-	//前三 自定义周期报警
-	if q3_cycle_number > 0 && q3_cycle_number >= packet.CycleNumber {
-		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 前三 "+ strconv.Itoa(q3_cycle_number) +" 周期报警! </div><br/>"
-		cycle_body += q3_html_log
-	}
-
-	//中三 自定义周期报警
-	if z3_cycle_number > 0 && z3_cycle_number >= packet.CycleNumber {
-		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 中三 "+ strconv.Itoa(z3_cycle_number) +" 周期报警! </div><br/>"
-		cycle_body += z3_html_log
-	}
-
-	//后三 自定义周期报警
-	if h3_cycle_number > 0 && h3_cycle_number >= packet.CycleNumber {
-		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 后三 "+ strconv.Itoa(h3_cycle_number) +" 周期报警! </div><br/>"
-		cycle_body += h3_html_log
-	}
-
-	//自定义周期报警 发送邮件
-	if cycle_body != "" {
-		go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
 	}
 }
 
