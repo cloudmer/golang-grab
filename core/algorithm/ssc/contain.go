@@ -383,17 +383,24 @@ func containAnalysisCodes(packet *model.Packet)  {
 	//最新的一期有数据包里的数据 才报警
 	if !q3_reference {
 		q3_number = 0
+		q3_cycle_number = 0
 	}
 	if !z3_reference {
 		z3_number = 0
+		//z3_cycle_number = 0
 	}
 	if !h3_reference {
 		h3_number = 0
+		h3_cycle_number = 0
 	}
 
 	//fmt.Println(contain_ssc_type[packet.Type], "q3 期数", q3_number)
 	//fmt.Println(contain_ssc_type[packet.Type], "z3 期数", z3_number)
 	//fmt.Println(contain_ssc_type[packet.Type], "h3 期数", h3_number)
+
+	//fmt.Println(contain_ssc_type[packet.Type], "q3 周期数", q3_cycle_number)
+	//fmt.Println(contain_ssc_type[packet.Type], "z3 周期数", z3_cycle_number)
+	//fmt.Println(contain_ssc_type[packet.Type], "h3 周期数", h3_cycle_number)
 
 	//fmt.Println(q3_html_log)
 	//fmt.Println(z3_html_log)
@@ -441,8 +448,8 @@ func containAnalysisCodes(packet *model.Packet)  {
 	}
 
 	//自定义周期报警 发送邮件
-	if cycle_body != "" {
-		//go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
+	if cycle_body != "" && contain_ssc_type[packet.Type] != "台湾五分彩"  {
+		go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
 	}
 }
 
