@@ -383,15 +383,12 @@ func containAnalysisCodes(packet *model.Packet)  {
 	//最新的一期有数据包里的数据 才报警
 	if !q3_reference {
 		q3_number = 0
-		q3_cycle_number = 0
 	}
 	if !z3_reference {
 		z3_number = 0
-		//z3_cycle_number = 0
 	}
 	if !h3_reference {
 		h3_number = 0
-		h3_cycle_number = 0
 	}
 
 	//fmt.Println(contain_ssc_type[packet.Type], "q3 期数", q3_number)
@@ -430,19 +427,19 @@ func containAnalysisCodes(packet *model.Packet)  {
 	}
 
 	//前三 自定义周期报警
-	if q3_cycle_number > 0 && q3_cycle_number >= packet.CycleNumber {
+	if q3_reference && q3_cycle_number > 0 && q3_cycle_number >= packet.CycleNumber {
 		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 前三 "+ strconv.Itoa(q3_cycle_number) +" 周期报警! </div><br/>"
 		cycle_body += q3_html_log
 	}
 
 	//中三 自定义周期报警
-	if z3_cycle_number > 0 && z3_cycle_number >= packet.CycleNumber {
+	if z3_reference && z3_cycle_number > 0 && z3_cycle_number >= packet.CycleNumber {
 		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 中三 "+ strconv.Itoa(z3_cycle_number) +" 周期报警! </div><br/>"
 		cycle_body += z3_html_log
 	}
 
 	//后三 自定义周期报警
-	if h3_cycle_number > 0 && h3_cycle_number >= packet.CycleNumber {
+	if h3_reference && h3_cycle_number > 0 && h3_cycle_number >= packet.CycleNumber {
 		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 后三 "+ strconv.Itoa(h3_cycle_number) +" 周期报警! </div><br/>"
 		cycle_body += h3_html_log
 	}
@@ -450,6 +447,9 @@ func containAnalysisCodes(packet *model.Packet)  {
 	//自定义周期报警 发送邮件
 	if cycle_body != "" && contain_ssc_type[packet.Type] != "台湾五分彩"  {
 		log.Println(contain_ssc_type[packet.Type], "自定义周期 包含数据包, 正在发送邮件")
+		log.Println("前三参考对象:", q3_reference, "前三:", q3_cycle_number)
+		log.Println("中三参考对象:", z3_reference, "中三:", z3_cycle_number)
+		log.Println("后三参考对象:", h3_reference, "后三:", h3_cycle_number)
 		//go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
 	}
 }
