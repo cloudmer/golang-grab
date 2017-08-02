@@ -446,11 +446,13 @@ func containAnalysisCodes(packet *model.Packet)  {
 
 	//自定义周期报警 发送邮件
 	if cycle_body != "" && contain_ssc_type[packet.Type] != "台湾五分彩"  {
+		/*
 		log.Println(contain_ssc_type[packet.Type], "自定义周期 包含数据包, 正在发送邮件")
 		log.Println("前三参考对象:", q3_reference, "前三:", q3_cycle_number)
 		log.Println("中三参考对象:", z3_reference, "中三:", z3_cycle_number)
 		log.Println("后三参考对象:", h3_reference, "后三:", h3_cycle_number)
-		//go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
+		*/
+		go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
 	}
 }
 
