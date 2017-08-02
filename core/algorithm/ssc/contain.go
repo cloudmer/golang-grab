@@ -433,7 +433,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 	}
 
 	//中三 自定义周期报警
-	if z3_reference && z3_cycle_number > 0 && z3_cycle_number >= packet.CycleNumber {
+	if 82 && z3_cycle_number > 0 && z3_cycle_number >= packet.CycleNumber {
 		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 中三 "+ strconv.Itoa(z3_cycle_number) +" 周期报警! </div><br/>"
 		cycle_body += z3_html_log
 	}
@@ -452,7 +452,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 		log.Println("中三参考对象:", z3_reference, "中三:", z3_cycle_number)
 		log.Println("后三参考对象:", h3_reference, "后三:", h3_cycle_number)
 		*/
-		go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
+		//go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
 	}
 }
 
