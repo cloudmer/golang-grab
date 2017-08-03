@@ -254,9 +254,12 @@ func containAnalysisCodes(packet *model.Packet)  {
 			q3_number = q3_number + 1
 			q3_cycle = 0
 			q3_cycle = q3_cycle + 1
+			q3_cycle_number = 0
 			q3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 前三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + q3 +"</div>"
 			q3_html_log += "<div>有基准 并且 当前号码在数据包内 清零 再 +1 = " + strconv.Itoa(q3_number) + "</div>"
 			q3_html_log += "<div>计算是否满1周期 的 计数器 清零 再 +1 = " + strconv.Itoa(q3_cycle) + "</div>"
+			q3_html_log += "<div>周期报警期数 清零 = " + strconv.Itoa(q3_cycle_number) + "</div>"
+
 			//检查是否满1周期
 			if q3_cycle == packet.Cycle {
 				q3_cycle_number += 1
@@ -296,9 +299,11 @@ func containAnalysisCodes(packet *model.Packet)  {
 			z3_number = z3_number + 1
 			z3_cycle = 0
 			z3_cycle = z3_cycle + 1
+			z3_cycle_number = 0
 			z3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 中三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + z3 +"</div>"
 			z3_html_log += "<div>有基准 并且 当前号码在数据包内 清零 再 +1 = " + strconv.Itoa(z3_number) + "</div>"
 			z3_html_log += "<div>计算是否满1周期 的 计数器 清零 再 +1 = " + strconv.Itoa(z3_cycle) + "</div>"
+			z3_html_log += "<div>周期报警期数 清零 = " + strconv.Itoa(z3_cycle_number) + "</div>"
 
 			//检查是否满1周期
 			if z3_cycle == packet.Cycle {
@@ -338,9 +343,11 @@ func containAnalysisCodes(packet *model.Packet)  {
 			h3_number = h3_number + 1
 			h3_cycle = 0
 			h3_cycle = h3_cycle + 1
+			h3_cycle_number = 0
 			h3_html_log += "<div>数据包别名: "+ packet.Alias + " 位置: 后三 " + " 数据包别名: " + packet.Alias+ " 开奖号: " + h3 +"</div>"
 			h3_html_log += "<div>有基准 并且 当前号码在数据包内 清零 再 +1 = " + strconv.Itoa(h3_number) + "</div>"
 			h3_html_log += "<div>计算是否满1周期 的 计数器 清零 再 +1 = " + strconv.Itoa(h3_cycle) + "</div>"
+			h3_html_log += "<div>周期报警期数 清零 = " + strconv.Itoa(h3_cycle_number) + "</div>"
 
 			//检查是否满1周期
 			if h3_cycle == packet.Cycle {
@@ -446,11 +453,11 @@ func containAnalysisCodes(packet *model.Packet)  {
 
 	//自定义周期报警 发送邮件
 	if cycle_body != "" && contain_ssc_type[packet.Type] != "台湾五分彩"  {
-		log.Println(contain_ssc_type[packet.Type], "自定义周期 包含数据包, 正在发送邮件")
-		log.Println("前三参考对象:", q3_reference, "前三:", q3_cycle_number)
-		log.Println("中三参考对象:", z3_reference, "中三:", z3_cycle_number)
-		log.Println("后三参考对象:", h3_reference, "后三:", h3_cycle_number)
-		//go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
+		//log.Println(contain_ssc_type[packet.Type], "自定义周期 包含数据包, 正在发送邮件")
+		//log.Println("前三参考对象:", q3_reference, "前三:", q3_cycle_number)
+		//log.Println("中三参考对象:", z3_reference, "中三:", z3_cycle_number)
+		//log.Println("后三参考对象:", h3_reference, "后三:", h3_cycle_number)
+		go mail.SendMail(contain_ssc_type[packet.Type] + " 自定义周期 包含数据包", cycle_body)
 	}
 }
 
