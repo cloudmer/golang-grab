@@ -56,7 +56,7 @@ func init()  {
 
 func ContailMultiple()  {
 
-	fmt.Println("时时彩 - 双包 - 连续算法报警")
+	fmt.Println("时时彩 - AB - 连续算法报警")
 
 	contain_multiple_ssc_type = make(map[int]string)
 	contain_multiple_ssc_type[1] = "重庆时时彩"
