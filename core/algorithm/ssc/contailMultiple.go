@@ -8,13 +8,12 @@ import (
 	"log"
 	"xmn/core/logger"
 	"strings"
-	"errors"
 	"strconv"
 	"xmn/core/mail"
 )
 
 //数据包
-var contain_multiple_datapackage []*model.Double
+var contain_multiple_datapackage []*model.DoubleContinuity
 
 //重庆开奖数据
 var contain_multiple_cq_data []*model.Cqssc
@@ -25,6 +24,9 @@ var contain_multiple_tj_data []*model.Tjssc
 //新疆开奖数据
 var contain_multiple_xj_data []*model.Xjssc
 
+//台湾开奖数据
+var contain_multiple_tw_data []*model.Twssc
+
 //彩票类型
 var contain_multiple_ssc_type map[int]string
 
@@ -33,7 +35,7 @@ var multipleNewCodes *multipleCode
 
 //时时彩 各个数据包 对应的 各个彩种的最新开奖号码
 type multipleCode struct {
-	codes map[int]string //数据包id => 该彩种的最新开奖号码 每个数据包对应的是一个彩种
+	codes map[int]string //彩票类型 => 该彩种的最新开奖号码 每个数据包对应的是一个彩种
 	lock sync.RWMutex
 }
 
@@ -42,8 +44,9 @@ type multipleData struct {
 	packageB   map[string]string
 	cpType     int
 	cpTypeName string
-	code       interface{}
-	packet     *model.Double
+	code       []string
+	position   string
+	packet     *model.DoubleContinuity
 }
 
 func init()  {
@@ -53,7 +56,7 @@ func init()  {
 
 func ContailMultiple()  {
 
-	fmt.Println("时时彩 - 包含数据包 - 自定义多期为一周期 算法")
+	fmt.Println("时时彩 - 双包 - 连续算法报警")
 
 	contain_multiple_ssc_type = make(map[int]string)
 	contain_multiple_ssc_type[1] = "重庆时时彩"
@@ -61,7 +64,7 @@ func ContailMultiple()  {
 	contain_multiple_ssc_type[3] = "新疆时时彩"
 	contain_multiple_ssc_type[4] = "台湾五分彩"
 
-	double := new(model.Double)
+	double := new(model.DoubleContinuity)
 	contain_multiple_datapackage = double.Query()
 
 	cqssc := new(model.Cqssc)
@@ -73,6 +76,9 @@ func ContailMultiple()  {
 	xjssc := new(model.Xjssc)
 	contain_multiple_xj_data = xjssc.Query("200")
 
+	twssc := new(model.Twssc)
+	contain_multiple_tw_data = twssc.Query("200")
+
 	containMultipAnalysis()
 }
 
@@ -82,13 +88,16 @@ func containMultipAnalysis()  {
 	}
 }
 
-func containMultipAnalysisCodes(packet *model.Double)  {
+func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	//检查是否在报警时间段以内
 	if (packet.Start >0 && packet.End >0) && (time.Now().Hour() < packet.Start || time.Now().Hour() > packet.End)  {
 		log.Println("AB 包含包 自定义周期 - 数据包别名:", packet.Alias, "报警通知非接受时间段内")
 		logger.Log("AB 包含包 自定义周期 - 数据包别名: " + packet.Alias + "报警通知非接受时间段内")
 		return
 	}
+
+	//检查会否属于重复分析
+
 
 	slice_dataTxt_package_a := strings.Split(packet.Package_a, "\r\n")
 	//slice data txt to slice data txt map
@@ -104,254 +113,359 @@ func containMultipAnalysisCodes(packet *model.Double)  {
 		dataTxtMapPackageB[slice_dataTxt_package_b[i]] = slice_dataTxt_package_b[i]
 	}
 
-	cq := &multipleData{
+	cq_q3s , cq_z3s , cq_h3s := getSsccodes(CqsscType)
+	tj_q3s , tj_z3s , tj_h3s := getSsccodes(TjsscType)
+	xj_q3s , xj_z3s , xj_h3s := getSsccodes(XjsscType)
+	tw_q3s , tw_z3s , tw_h3s := getSsccodes(TwsscType)
+
+	cq_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: contain_multiple_cq_data,
+		code: cq_q3s,
 		cpType: CqsscType,
 		cpTypeName: CpTypeName[CqsscType],
+		position: "前3",
 		packet: packet,
 	}
 
-	tj := &multipleData{
+	cq_z3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: contain_multiple_tj_data,
+		code: cq_z3s,
+		cpType: CqsscType,
+		cpTypeName: CpTypeName[CqsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	cq_h3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: cq_h3s,
+		cpType: CqsscType,
+		cpTypeName: CpTypeName[CqsscType],
+		position: "后3",
+		packet: packet,
+	}
+
+	tj_q3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: tj_q3s,
 		cpType: TjsscType,
 		cpTypeName: CpTypeName[TjsscType],
+		position: "前3",
 		packet: packet,
 	}
 
-	xj := &multipleData{
+	tj_z3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: contain_multiple_xj_data,
-		cpType: XjsscType,
-		cpTypeName: CpTypeName[XjsscType],
+		code: tj_z3s,
+		cpType: TjsscType,
+		cpTypeName: CpTypeName[TjsscType],
+		position: "中3",
 		packet: packet,
 	}
 
-	go cq.calculate()
-	go tj.calculate()
-	go xj.calculate()
+	tj_h3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: tj_h3s,
+		cpType: TjsscType,
+		cpTypeName: CpTypeName[TjsscType],
+		position: "后3",
+		packet: packet,
+	}
+
+	xj_q3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: xj_q3s,
+		cpType: XjsscType,
+		cpTypeName: CpTypeName[XjsscType],
+		position: "前3",
+		packet: packet,
+	}
+
+	xj_z3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: xj_z3s,
+		cpType: XjsscType,
+		cpTypeName: CpTypeName[XjsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	xj_h3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: xj_h3s,
+		cpType: XjsscType,
+		cpTypeName: CpTypeName[XjsscType],
+		position: "后3",
+		packet: packet,
+	}
+
+	tw_q3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: tw_q3s,
+		cpType: TwsscType,
+		cpTypeName: CpTypeName[TwsscType],
+		position: "前3",
+		packet: packet,
+	}
+
+	tw_z3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: tw_z3s,
+		cpType: TwsscType,
+		cpTypeName: CpTypeName[TwsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	tw_h3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: tw_h3s,
+		cpType: TwsscType,
+		cpTypeName: CpTypeName[TwsscType],
+		position: "后3",
+		packet: packet,
+	}
+
+	go cq_q3.calculate()
+	go cq_z3.calculate()
+	go cq_h3.calculate()
+
+	go tj_q3.calculate()
+	go tj_z3.calculate()
+	go tj_h3.calculate()
+
+	go xj_q3.calculate()
+	go xj_z3.calculate()
+	go xj_h3.calculate()
+
+	go tw_q3.calculate()
+	go tw_z3.calculate()
+	go tw_h3.calculate()
 }
 
-//开奖号是否最新 是否重复统计计算
-func multipCodeIsNewest(cp_tpe int, packet *model.Double) (bool, error) {
-	//重庆开奖号
-	if cp_tpe == CqsscType {
-		//获取最新开奖号码
-		model := new(model.Cqssc)
-		new_code, err := model.GetNesCode()
-		if err != nil {
-			//没有最新开奖号码 数据库中没有数据
-			return false, errors.New("重庆时时彩, 还没有开奖号码")
-		}
+//获取时时彩 前中后 开奖号码
+func getSsccodes(cyType int) ([]string, []string, []string)  {
+	q3codes := make([]string, 0)
+	z3codes := make([]string, 0)
+	h3codes := make([]string, 0)
 
-		//检查是否重复 计算
-		newcode := multipleNewCodes.Get(CqsscType)
-		if newcode == new_code {
-			return false, errors.New("AB 包 自定义周期 重庆时时彩 数据包别名: " + packet.Alias + " 最新的一期 已经分析过了... 等待出现新的开奖号 ")
-		}
-
-		//最新开奖号 与 内存中的最新开奖号 不相同 刷新内存最新开奖号值
-		multipleNewCodes.Set(CqsscType, new_code)
-		return true, nil
+	isRepeat := isRepeat(cyType)
+	if !isRepeat {
+		//fmt.Println(CpTypeName[cyType], "等待出现最新的号码")
+		return q3codes, z3codes, h3codes
 	}
 
-	//天津开奖号
-	if cp_tpe == CqsscType {
-		//获取最新开奖号码
-		model := new(model.Tjssc)
-		new_code, err := model.GetNesCode()
-		if err != nil {
-			//没有最新开奖号码 数据库中没有数据
-			return false, errors.New("天津时时彩, 还没有开奖号码")
+	//重庆时时彩
+	if cyType == CqsscType {
+		for i := range contain_multiple_cq_data {
+			q3s := contain_multiple_cq_data[i].One + contain_multiple_cq_data[i].Two + contain_multiple_cq_data[i].Three
+			z3s := contain_multiple_cq_data[i].Two + contain_multiple_cq_data[i].Three + contain_multiple_cq_data[i].Four
+			h3s := contain_multiple_cq_data[i].Three + contain_multiple_cq_data[i].Four + contain_multiple_cq_data[i].Five
+			q3codes = append(q3codes, q3s)
+			z3codes = append(z3codes, z3s)
+			h3codes = append(h3codes, h3s)
 		}
-		//检查是否重复 计算
-		newcode := multipleNewCodes.Get(TjsscType)
-		if newcode == new_code {
-			return false, errors.New("AB 包 自定义周期 天津时时彩 数据包别名: " + packet.Alias + " 最新的一期 已经分析过了... 等待出现新的开奖号 ")
-		}
-
-		//最新开奖号 与 内存中的最新开奖号 不相同 刷新内存最新开奖号值
-		multipleNewCodes.Set(TjsscType, new_code)
-		return true, nil
 	}
 
-	//新疆开奖号
-	if cp_tpe == CqsscType {
-		//获取最新开奖号码
-		model := new(model.Xjssc)
-		new_code, err := model.GetNesCode()
-		if err != nil {
-			//没有最新开奖号码 数据库中没有数据
-			return false, errors.New("新疆时时彩, 还没有开奖号码")
+	//天津时时彩
+	if cyType == TjsscType {
+		for i := range contain_multiple_tj_data {
+			q3s := contain_multiple_tj_data[i].One + contain_multiple_tj_data[i].Two + contain_multiple_tj_data[i].Three
+			z3s := contain_multiple_tj_data[i].Two + contain_multiple_tj_data[i].Three + contain_multiple_tj_data[i].Four
+			h3s := contain_multiple_tj_data[i].Three + contain_multiple_tj_data[i].Four + contain_multiple_tj_data[i].Five
+			q3codes = append(q3codes, q3s)
+			z3codes = append(z3codes, z3s)
+			h3codes = append(h3codes, h3s)
 		}
-		//检查是否重复 计算
-		newcode := multipleNewCodes.Get(XjsscType)
-		if newcode == new_code {
-			return false, errors.New("AB 包 自定义周期 新疆时时彩 数据包别名: " + packet.Alias + " 最新的一期 已经分析过了... 等待出现新的开奖号 ")
-		}
-
-		//最新开奖号 与 内存中的最新开奖号 不相同 刷新内存最新开奖号值
-		multipleNewCodes.Set(XjsscType, new_code)
-		return true, nil
 	}
-	return false, nil
+
+	//新疆时时彩
+	if cyType == XjsscType {
+		for i := range contain_multiple_xj_data {
+			q3s := contain_multiple_xj_data[i].One + contain_multiple_xj_data[i].Two + contain_multiple_xj_data[i].Three
+			z3s := contain_multiple_xj_data[i].Two + contain_multiple_xj_data[i].Three + contain_multiple_xj_data[i].Four
+			h3s := contain_multiple_xj_data[i].Three + contain_multiple_xj_data[i].Four + contain_multiple_xj_data[i].Five
+			q3codes = append(q3codes, q3s)
+			z3codes = append(z3codes, z3s)
+			h3codes = append(h3codes, h3s)
+		}
+	}
+
+	//台湾时时彩
+	if cyType == TwsscType {
+		for i := range contain_multiple_tw_data {
+			q3s := contain_multiple_tw_data[i].One + contain_multiple_tw_data[i].Two + contain_multiple_tw_data[i].Three
+			z3s := contain_multiple_tw_data[i].Two + contain_multiple_tw_data[i].Three + contain_multiple_tw_data[i].Four
+			h3s := contain_multiple_tw_data[i].Three + contain_multiple_tw_data[i].Four + contain_multiple_tw_data[i].Five
+			q3codes = append(q3codes, q3s)
+			z3codes = append(z3codes, z3s)
+			h3codes = append(h3codes, h3s)
+		}
+	}
+	return q3codes, z3codes, h3codes
 }
 
-func (md *multipleData) calculate()  {
-	isOk, err := multipCodeIsNewest(CqsscType, md.packet)
-	if isOk == false && err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	type codeStruct struct {
-		One   string
-		Two   string
-		Three string
-		Four  string
-		Five  string
-	}
-
-	codes := make([]*codeStruct, 0)
-
-	if md.cpType == CqsscType {
-		for i := range md.code.([]*model.Cqssc) {
-			codes = append(codes, &codeStruct{
-				One: md.code.([]*model.Cqssc)[i].One,
-				Two: md.code.([]*model.Cqssc)[i].Two,
-				Three: md.code.([]*model.Cqssc)[i].Three,
-				Four: md.code.([]*model.Cqssc)[i].Four,
-				Five: md.code.([]*model.Cqssc)[i].Five,
-			})
+//是否属于重复分析
+func isRepeat(cyType int) bool {
+	//重庆
+	if cyType == CqsscType {
+		//获取本次查询的最新号码
+		if len(contain_multiple_cq_data) == 0 {
+			return false
 		}
-	}
-	if md.cpType == TjsscType {
-		for i := range md.code.([]*model.Tjssc) {
-			codes = append(codes, &codeStruct{
-				One: md.code.([]*model.Tjssc)[i].One,
-				Two: md.code.([]*model.Tjssc)[i].Two,
-				Three: md.code.([]*model.Tjssc)[i].Three,
-				Four: md.code.([]*model.Tjssc)[i].Four,
-				Five: md.code.([]*model.Tjssc)[i].Five,
-			})
+		index := len(contain_multiple_cq_data) - 1
+		newCode := contain_multiple_cq_data[index].One + contain_multiple_cq_data[index].Two + contain_multiple_cq_data[index].Three + contain_multiple_cq_data[index].Four + contain_multiple_cq_data[index].Five
+		//获取内存中最新的重新开奖号码
+		new_code := multipleNewCodes.Get(cyType)
+		if new_code == newCode {
+			return false
 		}
+		//刷新最新开奖号码
+		multipleNewCodes.Set(cyType, newCode)
+		return true
 	}
-	if md.cpType == XjsscType {
-		for i := range md.code.([]*model.Xjssc) {
-			codes = append(codes, &codeStruct{
-				One: md.code.([]*model.Xjssc)[i].One,
-				Two: md.code.([]*model.Xjssc)[i].Two,
-				Three: md.code.([]*model.Xjssc)[i].Three,
-				Four: md.code.([]*model.Xjssc)[i].Four,
-				Five: md.code.([]*model.Xjssc)[i].Five,
-			})
+
+	//天津
+	if cyType == TjsscType {
+		//获取本次查询的最新号码
+		if len(contain_multiple_tj_data) == 0 {
+			return false
 		}
+		index := len(contain_multiple_tj_data) - 1
+		newCode := contain_multiple_tj_data[index].One + contain_multiple_tj_data[index].Two + contain_multiple_tj_data[index].Three + contain_multiple_tj_data[index].Four + contain_multiple_tj_data[index].Five
+		//获取内存中最新的重新开奖号码
+		new_code := multipleNewCodes.Get(cyType)
+		if new_code == newCode {
+			return false
+		}
+		//刷新最新开奖号码
+		multipleNewCodes.Set(cyType, newCode)
+		return true
 	}
 
-	//连续中 计数器
-	continuity_lucky := 0
-	//连续中 周期计数器
-	continuity_lucky_cycle_number := 0
+	//新疆
+	if cyType == XjsscType {
+		//获取本次查询的最新号码
+		if len(contain_multiple_xj_data) == 0 {
+			return false
+		}
+		index := len(contain_multiple_xj_data) - 1
+		newCode := contain_multiple_xj_data[index].One + contain_multiple_xj_data[index].Two + contain_multiple_xj_data[index].Three + contain_multiple_xj_data[index].Four + contain_multiple_xj_data[index].Five
+		//获取内存中最新的重新开奖号码
+		new_code := multipleNewCodes.Get(cyType)
+		if new_code == newCode {
+			return false
+		}
+		//刷新最新开奖号码
+		multipleNewCodes.Set(cyType, newCode)
+		return true
+	}
 
-	//连续未中 计数器
-	continuity_regret := 0
-	//连续未中 周期计数器
-	continuity_regret_cycle_number := 0
+	//台湾
+	if cyType == TwsscType {
+		//获取本次查询的最新号码
+		if len(contain_multiple_tw_data) == 0 {
+			return false
+		}
+		index := len(contain_multiple_tw_data) - 1
+		newCode := contain_multiple_tw_data[index].One + contain_multiple_tw_data[index].Two + contain_multiple_tw_data[index].Three + contain_multiple_tw_data[index].Four + contain_multiple_tw_data[index].Five
+		//获取内存中最新的重新开奖号码
+		new_code := multipleNewCodes.Get(cyType)
+		if new_code == newCode {
+			return false
+		}
+		//刷新最新开奖号码
+		multipleNewCodes.Set(cyType, newCode)
+		return true
+	}
 
-	strHtml := ""
+	return false
+}
 
-	for i := range codes {
-		q3 := codes[i].One + codes[i].Two + codes[i].Three
-		z3 := codes[i].Two + codes[i].Three + codes[i].Four
-		h3 := codes[i].Three + codes[i].Four + codes[i].Five
+func (md *multipleData) calculate() {
+	//连续包含A包内 初始化=0
+	continuity_a_num := 0
+	number := 0
+	strLogHtml := ""
+	status := false
+	for i := range md.code {
+		_, in_a := md.packageA[md.code[i]]
+		_, in_b := md.packageB[md.code[i]]
 
-		strHtml += " <div>开奖号码: " + codes[i].One + codes[i].Two + codes[i].Three + codes[i].Four + codes[i].Five + "</div>"
+		strLogHtml += "<div> 开奖号: "+ md.code[i] +"</div>"
 
-		_, q3_in := md.packageB[q3]
-		_, z3_in := md.packageB[z3]
-		_, h3_in := md.packageB[h3]
-
-		if !q3_in || !z3_in || !h3_in {
-			continuity_lucky = 0
-			continuity_regret += 1
-
-			strHtml += "<div>"
-			if !q3_in {
-				strHtml += "<span> 前未包含B </span>"
-			}
-
-			if !z3_in {
-				strHtml += "<span> 中未包含B </span>"
-			}
-
-			if !h3_in {
-				strHtml += "<span> 后未包含B </span>"
-			}
-			strHtml += "</div>"
-			strHtml += "<div> 连续未中计数="+ strconv.Itoa(continuity_regret) + " 连续中计数= "+ strconv.Itoa(continuity_lucky) +" </div><br/>"
-
-		} else {
-			continuity_regret = 0
-			continuity_lucky += 1
-
-			strHtml += "<div>"
-			if q3_in {
-				strHtml += "<span> 前包含B </span>"
-			}
-
-			if z3_in {
-				strHtml += "<span> 中包含B </span>"
-			}
-
-			if h3_in {
-				strHtml += "<span> 后包含B </span>"
-			}
-			strHtml += "</div>"
-			strHtml += "<div> 连续未中计数="+ strconv.Itoa(continuity_regret) + " 连续中计数= "+ strconv.Itoa(continuity_lucky) +" </div><br/>"
+		//没有连续出现A 并且 本次出现A包
+		if continuity_a_num == 0 && in_a {
+			status = true
+			//报警计数 +1
+			number += 1
+			//A 连续出现 +1
+			continuity_a_num += 1
+			strLogHtml += "<div>本期包含A包 报警+1 = "+ strconv.Itoa(number) +"</div>"
+			continue
 		}
 
-		if continuity_regret == md.packet.Cycle {
-			continuity_regret = 0
-			continuity_regret_cycle_number += 1
-			strHtml += "<br/>"
-			strHtml += " <div>连续未中已到自定义周期数["+ strconv.Itoa(md.packet.Cycle) +"] 连续未中周期计数器="+ strconv.Itoa(continuity_regret_cycle_number) +" </div><br/>"
+		//A包连续出现 并且 本次出现A包
+		if continuity_a_num >0 && in_a {
+			status = false
+			//A 连续出现 +1
+			continuity_a_num += 1
+			strLogHtml += "<div>本期包含A包 [不管]</div>"
+			continue
 		}
 
-		if continuity_lucky == md.packet.Cycle {
-			continuity_lucky = 0
-			continuity_lucky_cycle_number += 1
-			strHtml += "<br/>"
-			strHtml += " <div>连续中已到自定义周期数["+ strconv.Itoa(md.packet.Cycle) +"] 连续中周期计数器="+ strconv.Itoa(continuity_lucky_cycle_number) +" </div><br/>"
+		//A B 包都没出现
+		if !in_a && !in_b {
+			status = false
+			//A 连续出现清零
+			continuity_a_num = 0
+			strLogHtml += "<div>本期AB都不包含 [不管]</div>"
+			continue
 		}
 
+		//B包出现
+		if in_b {
+			// a a a a b 属于这种情况 必须 > 1
+			//A 包连续出现
+			if continuity_a_num > 1 {
+				status = false
+				//A 连续出现清零
+				continuity_a_num = 0
+				strLogHtml += "<div>包含B包,之前连续开B包 [不管]</div>"
+				continue
+			}
+
+			//A包未连续出现
+			if continuity_a_num <= 1 {
+				status = false
+				//报警计数 清零
+				number = 0
+				//A 连续出现清零
+				continuity_a_num = 0
+				strLogHtml += "<div>包含B包 报警清零=0</div>"
+				continue
+			}
+		}
 	}
 
-
-	//连续中周期 报警
-	if continuity_lucky_cycle_number >= md.packet.CycleNumber {
-		mailContents := "<div>" + md.cpTypeName +
-		    " 数据包别名: " + md.packet.Alias +
-			" AB包 自定周期报警通知 当前连续" + strconv.Itoa(md.packet.Cycle) + "期为1周期" +
-			" 当前周期报警数 " + strconv.Itoa(md.packet.CycleNumber) +
-			" 当前已经连续 " + strconv.Itoa(continuity_lucky_cycle_number) + "周期 未中 </div> <br/></br> "
-		mailContents += strHtml
-		go mail.SendMail(md.cpTypeName + " AB包 自定义周期 ", mailContents)
+	if status && number >= md.packet.Number {
+		emialBody := "<div>AB连续 - 彩种: "+ md.cpTypeName + " 位置: " + md.position + "数据包别名: "+ md.packet.Alias + " 报警期数: " + strconv.Itoa(number) + "</div><br/><br/>"
+		emialBody += strLogHtml
+		go mail.SendMail(md.cpTypeName + "ab连续报警", emialBody)
 	}
 
-	//连续中周期 报警
-	if continuity_regret_cycle_number >= md.packet.CycleNumber {
-		mailContents := "<div>" + md.cpTypeName +
-			" 数据包别名: " + md.packet.Alias +
-			" AB包 自定周期报警通知 当前连续" + strconv.Itoa(md.packet.Cycle) + "期为1周期" +
-			" 当前周期报警数" + strconv.Itoa(md.packet.CycleNumber) +
-			" 当前已经连续 " + strconv.Itoa(continuity_lucky_cycle_number) + "周期 中 </div>"
-		mailContents += strHtml
-		go mail.SendMail(md.cpTypeName + " AB包 自定义周期 ", mailContents)
-	}
 }
 
 func (c *multipleCode) Get(k int) string {

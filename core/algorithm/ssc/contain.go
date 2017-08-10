@@ -436,19 +436,19 @@ func containAnalysisCodes(packet *model.Packet)  {
 	//前三 自定义周期报警
 	if q3_reference && q3_cycle_number > 0 && q3_cycle_number >= packet.CycleNumber {
 		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 前三 "+ strconv.Itoa(q3_cycle_number) +" 周期报警! </div><br/>"
-		cycle_body += q3_html_log
+		//cycle_body += q3_html_log
 	}
 
 	//中三 自定义周期报警
 	if z3_reference && z3_cycle_number > 0 && z3_cycle_number >= packet.CycleNumber {
 		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 中三 "+ strconv.Itoa(z3_cycle_number) +" 周期报警! </div><br/>"
-		cycle_body += z3_html_log
+		//cycle_body += z3_html_log
 	}
 
 	//后三 自定义周期报警
 	if h3_reference && h3_cycle_number > 0 && h3_cycle_number >= packet.CycleNumber {
 		cycle_body += "<div> 自定义周期 彩种: "+ contain_ssc_type[packet.Type] + " 数据包别名: "+ packet.Alias + " 位置 后三 "+ strconv.Itoa(h3_cycle_number) +" 周期报警! </div><br/>"
-		cycle_body += h3_html_log
+		//cycle_body += h3_html_log
 	}
 
 	//自定义周期报警 发送邮件

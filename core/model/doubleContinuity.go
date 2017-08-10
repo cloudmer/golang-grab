@@ -5,11 +5,11 @@ import (
 )
 
 //报警状态码 开启
-const STATUS_ON int = 1
+const DC_STATUS_ON int = 1
 //报警状态码 关闭
-const STATUS_OFF int = 0
+const DC_STATUS_OFF int = 0
 
-type Double struct {
+type DoubleContinuity struct {
 	Id          int
 	Alias       string
 	Package_a   string
@@ -20,20 +20,20 @@ type Double struct {
 	Number      int
 }
 
-func (double *Double) Query() []*Double {
+func (model *DoubleContinuity) Query() []*DoubleContinuity {
 	//只查询开启了报警的数据
-	str_sql := "SELECT * FROM `double` WHERE status=" + strconv.Itoa(STATUS_ON) + ";"
+	str_sql := "SELECT * FROM `double_continuity` WHERE status=" + strconv.Itoa(DC_STATUS_ON) + ";"
 	rows, err := DB.Query(str_sql)
 	defer rows.Close()
 	if err != nil {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	data := make([]*Double, 0)
+	data := make([]*DoubleContinuity, 0)
 
 	for rows.Next() {
 		rows.Columns()
-		double := new(Double)
+		double := new(DoubleContinuity)
 		err := rows.Scan(
 			&double.Id,
 			&double.Alias,
