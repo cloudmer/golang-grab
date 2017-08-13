@@ -106,7 +106,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 		dataTxtMapPackageA[slice_dataTxt_package_a[i]] = slice_dataTxt_package_a[i]
 	}
 
-	slice_dataTxt_package_b := strings.Split(packet.Package_a, "\r\n")
+	slice_dataTxt_package_b := strings.Split(packet.Package_b, "\r\n")
 	//slice data txt to slice data txt map
 	dataTxtMapPackageB := make(map[string]string)
 	for i := range slice_dataTxt_package_b {
