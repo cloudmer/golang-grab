@@ -401,6 +401,15 @@ func (md *multipleData) calculate() {
 	strLogHtml := ""
 	status := false
 	for i := range md.code {
+		//检查上一期是否 包含A包
+		pre_code := ""
+		if i != 0 {
+			pre_code = md.code[i - 1]
+		}
+
+		//上一期是否包含A包
+		_, pre_in_a := md.packageA[pre_code]
+
 		_, in_a := md.packageA[md.code[i]]
 		_, in_b := md.packageB[md.code[i]]
 
@@ -443,20 +452,30 @@ func (md *multipleData) calculate() {
 				status = false
 				//A 连续出现清零
 				continuity_a_num = 0
-				strLogHtml += "<div>包含B包,之前连续开B包 [不管]</div>"
+				strLogHtml += "<div>包含B包,之前连续开A包 [不管]</div>"
 				continue
 			}
 
-			//A包未连续出现
-			if continuity_a_num <= 1 {
+			//A包未连续出现 并且 上一期包含A包
+			if continuity_a_num <= 1 && pre_in_a {
 				status = false
 				//报警计数 清零
 				number = 0
 				//A 连续出现清零
 				continuity_a_num = 0
-				strLogHtml += "<div>包含B包 报警清零=0</div>"
+				strLogHtml += "<div>包含B包 上一期包含A包 报警清零=0</div>"
 				continue
 			}
+
+			//A包未连续出现 并且 上一期未包含A包
+			if continuity_a_num <= 1 && !pre_in_a {
+				status = false
+				//A 连续出现清零
+				continuity_a_num = 0
+				strLogHtml += "<div>包含B包 不管 上一期不包含A包</div>"
+				continue
+			}
+
 		}
 	}
 
