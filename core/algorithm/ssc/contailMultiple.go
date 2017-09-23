@@ -395,6 +395,14 @@ func isRepeat(cyType int) bool {
 }
 
 func (md *multipleData) calculate() {
+
+	log.Println("===================", md.code)
+
+	if md.packet.Id == 8 {
+		log.Println("******************你来看号码", md.code)
+	}
+
+
 	//连续包含A包内 初始化=0
 	continuity_a_num := 0
 	number := 0
