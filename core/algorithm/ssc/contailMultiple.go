@@ -49,6 +49,24 @@ type multipleData struct {
 	packet     *model.DoubleContinuity
 }
 
+type cpTypeNewsCodes struct {
+	Cq_q3s []string
+	Cq_z3s []string
+	Cq_h3s []string
+
+	Tj_q3s []string
+	Tj_z3s []string
+	Tj_h3s []string
+
+	Xj_q3s []string
+	Xj_z3s []string
+	Xj_h3s []string
+
+	Tw_q3s []string
+	Tw_z3s []string
+	Tw_h3s []string
+}
+
 func init()  {
 	multipleNewCodes = new(multipleCode)
 	multipleNewCodes.codes = make(map[int]string)
@@ -83,12 +101,36 @@ func ContailMultiple()  {
 }
 
 func containMultipAnalysis()  {
+
+	cq_q3s , cq_z3s , cq_h3s := getSsccodes(CqsscType)
+	tj_q3s , tj_z3s , tj_h3s := getSsccodes(TjsscType)
+	xj_q3s , xj_z3s , xj_h3s := getSsccodes(XjsscType)
+	tw_q3s , tw_z3s , tw_h3s := getSsccodes(TwsscType)
+
+	cpTypenewsCodes := &cpTypeNewsCodes{
+		Cq_q3s: cq_q3s,
+		Cq_z3s: cq_z3s,
+		Cq_h3s: cq_h3s,
+
+		Tj_q3s: tj_q3s,
+		Tj_z3s: tj_z3s,
+		Tj_h3s: tj_h3s,
+
+		Xj_q3s: xj_q3s,
+		Xj_z3s: xj_z3s,
+		Xj_h3s: xj_h3s,
+
+		Tw_q3s: tw_q3s,
+		Tw_z3s: tw_z3s,
+		Tw_h3s: tw_h3s,
+	}
+
 	for i := range contain_multiple_datapackage {
-		go containMultipAnalysisCodes(contain_multiple_datapackage[i])
+		go containMultipAnalysisCodes(contain_multiple_datapackage[i], cpTypenewsCodes)
 	}
 }
 
-func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
+func containMultipAnalysisCodes(packet *model.DoubleContinuity, cpTypenewsCodes *cpTypeNewsCodes)  {
 	//检查是否在报警时间段以内
 	if (packet.Start >0 && packet.End >0) && (time.Now().Hour() < packet.Start || time.Now().Hour() > packet.End)  {
 		log.Println("AB 包含包 自定义周期 - 数据包别名:", packet.Alias, "报警通知非接受时间段内")
@@ -113,15 +155,17 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 		dataTxtMapPackageB[slice_dataTxt_package_b[i]] = slice_dataTxt_package_b[i]
 	}
 
+	/*
 	cq_q3s , cq_z3s , cq_h3s := getSsccodes(CqsscType)
 	tj_q3s , tj_z3s , tj_h3s := getSsccodes(TjsscType)
 	xj_q3s , xj_z3s , xj_h3s := getSsccodes(XjsscType)
 	tw_q3s , tw_z3s , tw_h3s := getSsccodes(TwsscType)
+	*/
 
 	cq_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: cq_q3s,
+		code: cpTypenewsCodes.Cq_q3s,
 		cpType: CqsscType,
 		cpTypeName: CpTypeName[CqsscType],
 		position: "前3",
@@ -131,7 +175,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	cq_z3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: cq_z3s,
+		code: cpTypenewsCodes.Cq_z3s,
 		cpType: CqsscType,
 		cpTypeName: CpTypeName[CqsscType],
 		position: "中3",
@@ -141,7 +185,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	cq_h3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: cq_h3s,
+		code: cpTypenewsCodes.Cq_h3s,
 		cpType: CqsscType,
 		cpTypeName: CpTypeName[CqsscType],
 		position: "后3",
@@ -151,7 +195,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	tj_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: tj_q3s,
+		code: cpTypenewsCodes.Tj_q3s,
 		cpType: TjsscType,
 		cpTypeName: CpTypeName[TjsscType],
 		position: "前3",
@@ -161,7 +205,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	tj_z3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: tj_z3s,
+		code: cpTypenewsCodes.Tj_z3s,
 		cpType: TjsscType,
 		cpTypeName: CpTypeName[TjsscType],
 		position: "中3",
@@ -171,7 +215,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	tj_h3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: tj_h3s,
+		code: cpTypenewsCodes.Tj_h3s,
 		cpType: TjsscType,
 		cpTypeName: CpTypeName[TjsscType],
 		position: "后3",
@@ -181,7 +225,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	xj_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: xj_q3s,
+		code: cpTypenewsCodes.Xj_q3s,
 		cpType: XjsscType,
 		cpTypeName: CpTypeName[XjsscType],
 		position: "前3",
@@ -191,7 +235,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	xj_z3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: xj_z3s,
+		code: cpTypenewsCodes.Xj_z3s,
 		cpType: XjsscType,
 		cpTypeName: CpTypeName[XjsscType],
 		position: "中3",
@@ -201,7 +245,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	xj_h3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: xj_h3s,
+		code: cpTypenewsCodes.Xj_h3s,
 		cpType: XjsscType,
 		cpTypeName: CpTypeName[XjsscType],
 		position: "后3",
@@ -211,7 +255,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	tw_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: tw_q3s,
+		code: cpTypenewsCodes.Tw_q3s,
 		cpType: TwsscType,
 		cpTypeName: CpTypeName[TwsscType],
 		position: "前3",
@@ -221,7 +265,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	tw_z3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: tw_z3s,
+		code: cpTypenewsCodes.Tw_z3s,
 		cpType: TwsscType,
 		cpTypeName: CpTypeName[TwsscType],
 		position: "中3",
@@ -231,7 +275,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity)  {
 	tw_h3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
-		code: tw_h3s,
+		code: cpTypenewsCodes.Tw_h3s,
 		cpType: TwsscType,
 		cpTypeName: CpTypeName[TwsscType],
 		position: "后3",
@@ -395,6 +439,11 @@ func isRepeat(cyType int) bool {
 }
 
 func (md *multipleData) calculate() {
+
+	if len(md.code) == 0 {
+		log.Println(md.cpTypeName, "已经分析过了, 等待出现新的号码出现")
+		return 
+	}
 
 	log.Println("===================", md.code)
 
