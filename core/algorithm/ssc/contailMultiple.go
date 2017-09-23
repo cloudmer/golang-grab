@@ -533,7 +533,7 @@ func (md *multipleData) calculate() {
 
 	if status && number >= md.packet.Number {
 		emialBody := "<div>AB连续 - 彩种: "+ md.cpTypeName + " 位置: " + md.position + "数据包别名: "+ md.packet.Alias + " 报警期数: " + strconv.Itoa(number) + "</div><br/><br/>"
-		emialBody += strLogHtml
+		//emialBody += strLogHtml
 		go mail.SendMail(md.cpTypeName + "ab连续报警", emialBody)
 	}
 
