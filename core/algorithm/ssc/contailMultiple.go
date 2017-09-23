@@ -484,6 +484,7 @@ func (md *multipleData) calculate() {
 
 	if md.packet.Id == 8 {
 		log.Println("------------", " - 统计完 - 别名:", md.packet.Alias, "位置", md.position, "AB连续", "彩种:", md.cpTypeName, "报警期数:", strconv.Itoa(number), "计数器", number, "报警期数", md.packet.Number, "当前期是否该报警", status && number >= md.packet.Number)
+		logger.Logs(strLogHtml, md.cpTypeName+"-"+md.position+"-"+md.packet.Alias+"-"+md.code[len(md.code)-1] + "-" + strconv.Itoa(int(time.Now().Unix())))
 	}
 
 	if status && number >= md.packet.Number {
