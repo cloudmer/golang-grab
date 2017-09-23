@@ -441,25 +441,15 @@ func isRepeat(cyType int) bool {
 func (md *multipleData) calculate() {
 
 	if len(md.code) == 0 {
-		log.Println(md.cpTypeName, "已经分析过了, 等待出现新的号码出现")
-		return 
+		return
 	}
-
-	log.Println("===================", md.code)
-
-	if md.packet.Id == 8 {
-		log.Println("******************你来看号码", md.code)
-	}
-
 
 	//连续包含A包内 初始化=0
 	continuity_a_num := 0
 	number := 0
 	strLogHtml := ""
 	status := false
-	newsCode := ""
 	for i := range md.code {
-		newsCode = md.code[i]
 		//检查上一期是否 包含A包
 		pre_code := ""
 		if i != 0 {
@@ -539,13 +529,6 @@ func (md *multipleData) calculate() {
 			}
 
 		}
-	}
-
-	if md.packet.Id == 8 {
-		log.Println("------------", " - 统计完 - 别名:", md.packet.Alias, "位置", md.position, "AB连续", "彩种:", md.cpTypeName, "报警期数:", strconv.Itoa(number), "计数器", number, "报警期数", md.packet.Number, "当前期是否该报警", status && number >= md.packet.Number)
-		log.Println(md.code)
-		log.Println("------------", newsCode, " - 统计完 - 别名:", md.packet.Alias, "位置", md.position, "AB连续", "彩种:", md.cpTypeName, "报警期数:", strconv.Itoa(number), "计数器", number, "报警期数", md.packet.Number, "当前期是否该报警", status && number >= md.packet.Number)
-		logger.Logs(newsCode + strLogHtml , md.cpTypeName+"-"+md.position+"-"+md.packet.Alias+"-"+ newsCode + "-" + strconv.Itoa(int(time.Now().Unix())))
 	}
 
 	if status && number >= md.packet.Number {
