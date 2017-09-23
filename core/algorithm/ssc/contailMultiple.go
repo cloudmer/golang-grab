@@ -407,8 +407,11 @@ func (md *multipleData) calculate() {
 			pre_code = md.code[i - 1]
 		}
 
+		var pre_in_a bool = false
 		//上一期是否包含A包
-		_, pre_in_a := md.packageA[pre_code]
+		if pre_code != "" {
+			_, pre_in_a = md.packageA[pre_code]
+		}
 
 		_, in_a := md.packageA[md.code[i]]
 		_, in_b := md.packageB[md.code[i]]
