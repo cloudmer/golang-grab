@@ -482,7 +482,9 @@ func (md *multipleData) calculate() {
 		}
 	}
 
-	log.Println("------------", " - 统计完 - 别名:", md.packet.Alias, "AB连续", "彩种:", md.cpTypeName, "报警期数:", strconv.Itoa(number), "当前期是否该报警", status && number >= md.packet.Number, "计数器", number, "报警期数", md.packet.Number)
+	if md.packet.Id == 8 {
+		log.Println("------------", " - 统计完 - 别名:", md.packet.Alias, "位置", md.position, "AB连续", "彩种:", md.cpTypeName, "报警期数:", strconv.Itoa(number), "计数器", number, "报警期数", md.packet.Number, "当前期是否该报警", status && number >= md.packet.Number)
+	}
 
 	if status && number >= md.packet.Number {
 		emialBody := "<div>AB连续 - 彩种: "+ md.cpTypeName + " 位置: " + md.position + "数据包别名: "+ md.packet.Alias + " 报警期数: " + strconv.Itoa(number) + "</div><br/><br/>"
