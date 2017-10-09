@@ -24,8 +24,10 @@ var contain_multiple_tj_data []*model.Tjssc
 //新疆开奖数据
 var contain_multiple_xj_data []*model.Xjssc
 
+/*
 //台湾开奖数据
 var contain_multiple_tw_data []*model.Twssc
+*/
 
 //彩票类型
 var contain_multiple_ssc_type map[int]string
@@ -62,9 +64,11 @@ type cpTypeNewsCodes struct {
 	Xj_z3s []string
 	Xj_h3s []string
 
+	/*
 	Tw_q3s []string
 	Tw_z3s []string
 	Tw_h3s []string
+	*/
 }
 
 func init()  {
@@ -94,8 +98,10 @@ func ContailMultiple()  {
 	xjssc := new(model.Xjssc)
 	contain_multiple_xj_data = xjssc.Query("200")
 
+	/*
 	twssc := new(model.Twssc)
 	contain_multiple_tw_data = twssc.Query("200")
+	*/
 
 	containMultipAnalysis()
 }
@@ -105,7 +111,7 @@ func containMultipAnalysis()  {
 	cq_q3s , cq_z3s , cq_h3s := getSsccodes(CqsscType)
 	tj_q3s , tj_z3s , tj_h3s := getSsccodes(TjsscType)
 	xj_q3s , xj_z3s , xj_h3s := getSsccodes(XjsscType)
-	tw_q3s , tw_z3s , tw_h3s := getSsccodes(TwsscType)
+	//tw_q3s , tw_z3s , tw_h3s := getSsccodes(TwsscType)
 
 	cpTypenewsCodes := &cpTypeNewsCodes{
 		Cq_q3s: cq_q3s,
@@ -120,9 +126,11 @@ func containMultipAnalysis()  {
 		Xj_z3s: xj_z3s,
 		Xj_h3s: xj_h3s,
 
+		/*
 		Tw_q3s: tw_q3s,
 		Tw_z3s: tw_z3s,
 		Tw_h3s: tw_h3s,
+		*/
 	}
 
 	for i := range contain_multiple_datapackage {
@@ -252,6 +260,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity, cpTypenewsCodes 
 		packet: packet,
 	}
 
+	/*
 	tw_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
@@ -281,6 +290,7 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity, cpTypenewsCodes 
 		position: "后3",
 		packet: packet,
 	}
+	*/
 
 	go cq_q3.calculate()
 	go cq_z3.calculate()
@@ -294,9 +304,11 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity, cpTypenewsCodes 
 	go xj_z3.calculate()
 	go xj_h3.calculate()
 
+	/*
 	go tw_q3.calculate()
 	go tw_z3.calculate()
 	go tw_h3.calculate()
+	*/
 }
 
 //获取时时彩 前中后 开奖号码
@@ -347,6 +359,7 @@ func getSsccodes(cyType int) ([]string, []string, []string)  {
 		}
 	}
 
+	/*
 	//台湾时时彩
 	if cyType == TwsscType {
 		for i := range contain_multiple_tw_data {
@@ -358,6 +371,8 @@ func getSsccodes(cyType int) ([]string, []string, []string)  {
 			h3codes = append(h3codes, h3s)
 		}
 	}
+	*/
+
 	return q3codes, z3codes, h3codes
 }
 
@@ -417,6 +432,7 @@ func isRepeat(cyType int) bool {
 		return true
 	}
 
+	/*
 	//台湾
 	if cyType == TwsscType {
 		//获取本次查询的最新号码
@@ -434,6 +450,7 @@ func isRepeat(cyType int) bool {
 		multipleNewCodes.Set(cyType, newCode)
 		return true
 	}
+	*/
 
 	return false
 }
