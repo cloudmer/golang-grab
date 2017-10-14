@@ -108,20 +108,6 @@ func analysis(packet *model.CustomPackage, allCodes *allCpCodes)  {
 
 //计算分析
 func (c *computing) calculate()  {
-
-	c.code = make([]string, 0)
-	c.code = append(c.code, "001")
-	c.code = append(c.code, "001")
-	c.code = append(c.code, "001")
-	c.code = append(c.code, "001")
-	c.code = append(c.code, "001")
-	c.code = append(c.code, "999")
-	c.code = append(c.code, "012")
-	c.code = append(c.code, "001")
-
-	c.code = append(c.code, "001")
-	c.code = append(c.code, "001")
-
 	//连续包含A包 计数 连续包含A包 大于 自定义周期数 就算开 要清零 重新计算了 , 当值 等于 自定义周期的时候 周期计数就要累加(报警期数)
 	continuity_num := 0
 
