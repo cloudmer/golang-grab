@@ -7,6 +7,7 @@ import (
 	_ "xmn/core/model"
 	"log"
 	"os"
+	"xmn/core/algorithm/shishicai/CustomPackage"
 )
 
 func main(){
@@ -22,6 +23,8 @@ func main(){
 			go ssc.Consecutive()
 			// 时时彩 连续AB表报警
 			go ssc.ContailMultiple()
+			// 时时彩 AB包 自定义A包周期 报警
+			go CustomPackage.Calculation()
 		}
 	}
 }
