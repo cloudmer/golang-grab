@@ -284,7 +284,7 @@ func (c *computing) calculate()  {
 
 	//到达报警条件
 	if last_in_a && cycle_count >= c.packet.Number {
-		emailTitle := "<div>自定义连续 "+ strconv.Itoa(c.packet.Continuity) +"A 报警"+ " 彩种: "+ c.cpTypeName + " 位置: "+ c.position +" 报警 ["+ strconv.Itoa(cycle_count) +"]期 提示</div> <br/><br/>"
+		emailTitle := "<div>自定义连续 "+ strconv.Itoa(c.packet.Continuity) +"A 报警"+ " 彩种: "+ c.cpTypeName + " 位置: "+ c.position + " 包别名: "+ c.packet.Alias +" 报警 ["+ strconv.Itoa(cycle_count) +"]期 提示</div> <br/><br/>"
 		go mail.SendMail(c.cpTypeName + "AB包自定义报警", emailTitle + strHtmlContents)
 	}
 
