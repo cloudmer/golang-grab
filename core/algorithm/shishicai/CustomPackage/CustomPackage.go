@@ -174,17 +174,17 @@ func analysis(packet *model.CustomPackage, allCodes *allCpCodes)  {
 		packet: packet,
 	}
 
-	cq_q3.calculate()
-	cq_z3.calculate()
-	cq_h3.calculate()
+	go cq_q3.calculate()
+	go cq_z3.calculate()
+	go cq_h3.calculate()
 
-	tj_q3.calculate()
-	tj_z3.calculate()
-	tj_h3.calculate()
+	go tj_q3.calculate()
+	go tj_z3.calculate()
+	go tj_h3.calculate()
 
-	xj_q3.calculate()
-	xj_z3.calculate()
-	xj_h3.calculate()
+	go xj_q3.calculate()
+	go xj_z3.calculate()
+	go xj_h3.calculate()
 }
 
 //计算分析
@@ -287,6 +287,7 @@ func (c *computing) calculate()  {
 		emailTitle := "<div>自定义连续 "+ strconv.Itoa(c.packet.Continuity) +"A 报警"+ " 彩种: "+ c.cpTypeName + " 位置: "+ c.position +" 报警 ["+ strconv.Itoa(cycle_count) +"]期 提示</div> <br/><br/>"
 		go mail.SendMail(c.cpTypeName + "AB包自定义报警", emailTitle + strHtmlContents)
 	}
+
 }
 
 //获取 前中后3 开奖号
