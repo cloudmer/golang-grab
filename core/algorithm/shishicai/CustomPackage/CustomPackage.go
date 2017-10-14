@@ -219,7 +219,7 @@ func (c *computing) calculate()  {
 	//周期计数 也是报警期数计数
 	cycle_count := 0
 
-	strHtmlContents := "<div>间隔自定义 "+ strconv.Itoa(c.packet.Continuity) +"A 报警提示</div>"
+	strHtmlContents := "<div>自定义连续 "+ strconv.Itoa(c.packet.Continuity) +"A 报警提示</div>"
 	strHtmlContents += "<div>彩票类型: "+ c.cpTypeName+ " 数据包别名: "+ c.packet.Alias + " 计算位置: "+ c.position +"</div>"
 	strHtmlContents += "<div>当前设置 "+ strconv.Itoa(c.packet.Continuity)+ " A 阀值, 报警期数设置为: "+ strconv.Itoa(c.packet.Number) +"期</div><br/><br/>"
 
@@ -284,7 +284,8 @@ func (c *computing) calculate()  {
 
 	//到达报警条件
 	if last_in_a && cycle_count >= c.packet.Number {
-		go mail.SendMail(c.cpTypeName + "AB包自定义报警", strHtmlContents)
+		emailTitle := "<div>自定义连续 "+ strconv.Itoa(c.packet.Continuity) +"A 报警"+ " 彩种: "+ c.cpTypeName + " 位置: "+ c.position +" 报警 ["+ strconv.Itoa(cycle_count) +"]期 提示</div> <br/><br/>"
+		go mail.SendMail(c.cpTypeName + "AB包自定义报警", emailTitle + strHtmlContents)
 	}
 }
 
