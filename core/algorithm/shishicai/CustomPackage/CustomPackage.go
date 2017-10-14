@@ -223,7 +223,25 @@ func (c *computing) calculate()  {
 	strHtmlContents += "<div>彩票类型: "+ c.cpTypeName+ " 数据包别名: "+ c.packet.Alias + " 计算位置: "+ c.position +"</div>"
 	strHtmlContents += "<div>当前设置 "+ strconv.Itoa(c.packet.Continuity)+ " A 阀值, 报警期数设置为: "+ strconv.Itoa(c.packet.Number) +"期</div><br/><br/>"
 
+	//例子1 设置 2A 2期
+	//a 1A
+	//a 2A [ 1期 ]
+	//b
+	//a 1A [ 不报 ]
+
+	//例子2 设置 2A 2期
+
+	//a 1A
+	//a 2A [ 1期 ]
+	//b
+	//a 1A [ 不报 ]
+	//a 2A [ 2期 报]
+	status := false
+
 	for i := range c.code {
+		//不能报警
+		status = false
+
 		_, in_package := c.packet_map[c.code[i]]
 		//不考虑AB包是否有重复的值
 
@@ -255,6 +273,8 @@ func (c *computing) calculate()  {
 		if continuity_num == c.packet.Continuity {
 			//A包连续 累加
 			cycle_count += 1
+			//达到报警条件
+			status = true
 			strHtmlContents += "<div>A包连续值 = 等于 A包阀值, 报警期数 +1,  A包连续: "+ strconv.Itoa(continuity_num)+ " 报警累计: "+ strconv.Itoa(cycle_count) + "</div>"
 		}
 
@@ -283,7 +303,7 @@ func (c *computing) calculate()  {
 	}
 
 	//到达报警条件
-	if last_in_a && cycle_count >= c.packet.Number {
+	if status && last_in_a && cycle_count >= c.packet.Number {
 		emailTitle := "<div>自定义连续 "+ strconv.Itoa(c.packet.Continuity) +"A 报警"+ " 彩种: "+ c.cpTypeName + " 位置: "+ c.position + " 包别名: "+ c.packet.Alias +" 报警 ["+ strconv.Itoa(cycle_count) +"]期 提示</div> <br/><br/>"
 		go mail.SendMail(c.cpTypeName + "AB包自定义报警", emailTitle + strHtmlContents)
 	}
