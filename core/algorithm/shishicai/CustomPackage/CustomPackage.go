@@ -1,7 +1,6 @@
 package CustomPackage
 
 import (
-	"fmt"
 	"xmn/core/model"
 	"time"
 	"log"
@@ -9,6 +8,7 @@ import (
 	"strings"
 	"strconv"
 	"xmn/core/mail"
+	"fmt"
 )
 
 //时时彩 自定包 算法
@@ -16,8 +16,7 @@ import (
 
 //计算分析结构体
 type computing struct {
-	packageA   map[string]string
-	packageB   map[string]string
+	packet_map   map[string]string
 	cpType     int
 	cpTypeName string
 	code       []string
@@ -77,25 +76,17 @@ func analysis(packet *model.CustomPackage, allCodes *allCpCodes)  {
 		return
 	}
 
-	//AB包解析成map
-	slice_dataTxt_package_a := strings.Split(packet.Package_a, "\r\n")
+	//数据包包解析成map
+	slice_dataTxt_package := strings.Split(packet.Package, "\r\n")
 	//slice data txt to slice data txt map
-	dataTxtMapPackageA := make(map[string]string)
-	for i := range slice_dataTxt_package_a {
-		dataTxtMapPackageA[slice_dataTxt_package_a[i]] = slice_dataTxt_package_a[i]
-	}
-
-	slice_dataTxt_package_b := strings.Split(packet.Package_b, "\r\n")
-	//slice data txt to slice data txt map
-	dataTxtMapPackageB := make(map[string]string)
-	for i := range slice_dataTxt_package_b {
-		dataTxtMapPackageB[slice_dataTxt_package_b[i]] = slice_dataTxt_package_b[i]
+	dataTxtMapPackage := make(map[string]string)
+	for i := range slice_dataTxt_package {
+		dataTxtMapPackage[slice_dataTxt_package[i]] = slice_dataTxt_package[i]
 	}
 
 	//重庆前3
 	cq_q3 := &computing{
-		packageA: dataTxtMapPackageA,
-		packageB: dataTxtMapPackageB,
+		packet_map: dataTxtMapPackage,
 		code: allCodes.cq_q3s,
 		cpType: cqsscType,
 		cpTypeName: cpTypeName[cqsscType],
@@ -103,11 +94,112 @@ func analysis(packet *model.CustomPackage, allCodes *allCpCodes)  {
 		packet: packet,
 	}
 
+	//重庆中3
+	cq_z3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.cq_z3s,
+		cpType: cqsscType,
+		cpTypeName: cpTypeName[cqsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	//重庆后3
+	cq_h3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.cq_h3s,
+		cpType: cqsscType,
+		cpTypeName: cpTypeName[cqsscType],
+		position: "后3",
+		packet: packet,
+	}
+
+	//天津前3
+	tj_q3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.tj_q3s,
+		cpType: tjsscType,
+		cpTypeName: cpTypeName[tjsscType],
+		position: "前3",
+		packet: packet,
+	}
+
+	//天津中3
+	tj_z3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.tj_z3s,
+		cpType: tjsscType,
+		cpTypeName: cpTypeName[tjsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	//天津后3
+	tj_h3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.tj_h3s,
+		cpType: tjsscType,
+		cpTypeName: cpTypeName[tjsscType],
+		position: "后3",
+		packet: packet,
+	}
+
+	//新疆前3
+	xj_q3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.xj_q3s,
+		cpType: xjsscType,
+		cpTypeName: cpTypeName[xjsscType],
+		position: "前3",
+		packet: packet,
+	}
+
+	//新疆中3
+	xj_z3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.xj_z3s,
+		cpType: xjsscType,
+		cpTypeName: cpTypeName[xjsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	//新疆后3
+	xj_h3 := &computing{
+		packet_map: dataTxtMapPackage,
+		code: allCodes.xj_h3s,
+		cpType: xjsscType,
+		cpTypeName: cpTypeName[xjsscType],
+		position: "后3",
+		packet: packet,
+	}
+
 	cq_q3.calculate()
+	cq_z3.calculate()
+	cq_h3.calculate()
+
+	tj_q3.calculate()
+	tj_z3.calculate()
+	tj_h3.calculate()
+
+	xj_q3.calculate()
+	xj_z3.calculate()
+	xj_h3.calculate()
 }
 
 //计算分析
 func (c *computing) calculate()  {
+	/*
+	c.code = make([]string, 0)
+	c.code = append(c.code, "001")
+	c.code = append(c.code, "001")
+	c.code = append(c.code, "001")
+	c.code = append(c.code, "001")
+	c.code = append(c.code, "001")
+	c.code = append(c.code, "012")
+	c.code = append(c.code, "001")
+	*/
+
 	//连续包含A包 计数 连续包含A包 大于 自定义周期数 就算开 要清零 重新计算了 , 当值 等于 自定义周期的时候 周期计数就要累加(报警期数)
 	continuity_num := 0
 
@@ -132,14 +224,13 @@ func (c *computing) calculate()  {
 	strHtmlContents += "<div>当前设置 "+ strconv.Itoa(c.packet.Continuity)+ " A 阀值, 报警期数设置为: "+ strconv.Itoa(c.packet.Number) +"期</div><br/><br/>"
 
 	for i := range c.code {
-		_, in_a := c.packageA[c.code[i]]
-		_, in_b := c.packageB[c.code[i]]
+		_, in_package := c.packet_map[c.code[i]]
 		//不考虑AB包是否有重复的值
 
 		strHtmlContents += "<div>开奖号: "+ c.code[i] + "</div>"
 
-		//包含B包 A包连续中断 重新计数
-		if in_b {
+		//不包含A包的意思是 包含B包 A包连续中断 重新计数
+		if !in_package {
 			//A包连续清零
 			continuity_num = 0
 			//A包连续状态 设置 允许计算连续值
@@ -155,7 +246,7 @@ func (c *computing) calculate()  {
 		}
 
 		//包含A包 A包连续累加
-		if in_a {
+		if in_package {
 			continuity_num += 1
 			strHtmlContents += "<div>包含_A包, A包连续 +1,  A包连续: "+ strconv.Itoa(continuity_num)+ " 报警累计: "+ strconv.Itoa(cycle_count) + "</div>"
 		}
@@ -185,7 +276,7 @@ func (c *computing) calculate()  {
 	last_in_a := false
 	if len(c.code) > 0 {
 		last_code := c.code[len(c.code) - 1]
-		_, in_a := c.packageA[last_code]
+		_, in_a := c.packet_map[last_code]
 		if in_a {
 			last_in_a = true
 		}

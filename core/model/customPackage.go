@@ -3,8 +3,7 @@ package model
 type CustomPackage struct {
 	Id         int
 	Alias      string
-	Package_a   string
-	Package_b   string
+	Package   string
 	Status     int
 	Start      int
 	End        int
@@ -29,8 +28,7 @@ func (model *CustomPackage) Query() []*CustomPackage  {
 		err := rows.Scan(
 			&obj.Id,
 			&obj.Alias,
-			&obj.Package_a,
-			&obj.Package_b,
+			&obj.Package,
 			&obj.Status,
 			&obj.Start,
 			&obj.End,
