@@ -392,6 +392,17 @@ func isRepeat(cpType int) bool {
 		newCode = cqCodes[index].One + cqCodes[index].Two + cqCodes[index].Three + cqCodes[index].Four + cqCodes[index].Five
 	}
 
+	// 新疆时时彩
+	if cpType == xjsscType {
+		//获取本次查询的最新号码
+		if len(xjCodes) == 0 {
+			return false
+		}
+		index := len(xjCodes) - 1
+		newCode = xjCodes[index].One + xjCodes[index].Two + xjCodes[index].Three + xjCodes[index].Four + xjCodes[index].Five
+	}
+
+	/*
 	//天津时时彩
 	if cpType == tjsscType {
 		//获取本次查询的最新号码
@@ -401,15 +412,7 @@ func isRepeat(cpType int) bool {
 		index := len(tjCodes) - 1
 		newCode = tjCodes[index].One + tjCodes[index].Two + tjCodes[index].Three + tjCodes[index].Four + tjCodes[index].Five
 	}
-
-	if cpType == xjsscType {
-		//获取本次查询的最新号码
-		if len(xjCodes) == 0 {
-			return false
-		}
-		index := len(xjCodes) - 1
-		newCode = xjCodes[index].One + xjCodes[index].Two + xjCodes[index].Three + xjCodes[index].Four + xjCodes[index].Five
-	}
+	 */
 
 	//获取内存中最新的重新开奖号码
 	new_code = newsCode.Get(cpType)

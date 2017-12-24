@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"xmn/core/algorithm/shishicai/CustomPackage"
+	"xmn/core/algorithm/shishicai/play1"
 )
 
 func main(){
@@ -25,6 +26,8 @@ func main(){
 			go ssc.ContailMultiple()
 			// 时时彩 AB包 自定义A包周期 报警
 			go CustomPackage.Calculation()
+			// 时时彩 a出现几期的b
+			go play1.Calculation()
 		}
 	}
 }
