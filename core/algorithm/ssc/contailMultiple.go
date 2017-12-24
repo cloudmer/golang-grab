@@ -18,13 +18,13 @@ var contain_multiple_datapackage []*model.DoubleContinuity
 //重庆开奖数据
 var contain_multiple_cq_data []*model.Cqssc
 
-//天津开奖数据
-var contain_multiple_tj_data []*model.Tjssc
-
 //新疆开奖数据
 var contain_multiple_xj_data []*model.Xjssc
 
 /*
+//天津开奖数据
+var contain_multiple_tj_data []*model.Tjssc
+
 //台湾开奖数据
 var contain_multiple_tw_data []*model.Twssc
 */
@@ -56,15 +56,15 @@ type cpTypeNewsCodes struct {
 	Cq_z3s []string
 	Cq_h3s []string
 
-	Tj_q3s []string
-	Tj_z3s []string
-	Tj_h3s []string
-
 	Xj_q3s []string
 	Xj_z3s []string
 	Xj_h3s []string
 
 	/*
+	Tj_q3s []string
+	Tj_z3s []string
+	Tj_h3s []string
+
 	Tw_q3s []string
 	Tw_z3s []string
 	Tw_h3s []string
@@ -92,13 +92,13 @@ func ContailMultiple()  {
 	cqssc := new(model.Cqssc)
 	contain_multiple_cq_data = cqssc.Query("200")
 
-	tjssc := new(model.Tjssc)
-	contain_multiple_tj_data = tjssc.Query("200")
-
 	xjssc := new(model.Xjssc)
 	contain_multiple_xj_data = xjssc.Query("200")
 
 	/*
+	tjssc := new(model.Tjssc)
+	contain_multiple_tj_data = tjssc.Query("200")
+
 	twssc := new(model.Twssc)
 	contain_multiple_tw_data = twssc.Query("200")
 	*/
@@ -109,8 +109,8 @@ func ContailMultiple()  {
 func containMultipAnalysis()  {
 
 	cq_q3s , cq_z3s , cq_h3s := getSsccodes(CqsscType)
-	tj_q3s , tj_z3s , tj_h3s := getSsccodes(TjsscType)
 	xj_q3s , xj_z3s , xj_h3s := getSsccodes(XjsscType)
+	//tj_q3s , tj_z3s , tj_h3s := getSsccodes(TjsscType)
 	//tw_q3s , tw_z3s , tw_h3s := getSsccodes(TwsscType)
 
 	cpTypenewsCodes := &cpTypeNewsCodes{
@@ -118,15 +118,15 @@ func containMultipAnalysis()  {
 		Cq_z3s: cq_z3s,
 		Cq_h3s: cq_h3s,
 
-		Tj_q3s: tj_q3s,
-		Tj_z3s: tj_z3s,
-		Tj_h3s: tj_h3s,
-
 		Xj_q3s: xj_q3s,
 		Xj_z3s: xj_z3s,
 		Xj_h3s: xj_h3s,
 
 		/*
+		Tj_q3s: tj_q3s,
+		Tj_z3s: tj_z3s,
+		Tj_h3s: tj_h3s,
+
 		Tw_q3s: tw_q3s,
 		Tw_z3s: tw_z3s,
 		Tw_h3s: tw_h3s,
@@ -200,36 +200,6 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity, cpTypenewsCodes 
 		packet: packet,
 	}
 
-	tj_q3 := &multipleData{
-		packageA: dataTxtMapPackageA,
-		packageB: dataTxtMapPackageB,
-		code: cpTypenewsCodes.Tj_q3s,
-		cpType: TjsscType,
-		cpTypeName: CpTypeName[TjsscType],
-		position: "前3",
-		packet: packet,
-	}
-
-	tj_z3 := &multipleData{
-		packageA: dataTxtMapPackageA,
-		packageB: dataTxtMapPackageB,
-		code: cpTypenewsCodes.Tj_z3s,
-		cpType: TjsscType,
-		cpTypeName: CpTypeName[TjsscType],
-		position: "中3",
-		packet: packet,
-	}
-
-	tj_h3 := &multipleData{
-		packageA: dataTxtMapPackageA,
-		packageB: dataTxtMapPackageB,
-		code: cpTypenewsCodes.Tj_h3s,
-		cpType: TjsscType,
-		cpTypeName: CpTypeName[TjsscType],
-		position: "后3",
-		packet: packet,
-	}
-
 	xj_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
@@ -261,6 +231,36 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity, cpTypenewsCodes 
 	}
 
 	/*
+	tj_q3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: cpTypenewsCodes.Tj_q3s,
+		cpType: TjsscType,
+		cpTypeName: CpTypeName[TjsscType],
+		position: "前3",
+		packet: packet,
+	}
+
+	tj_z3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: cpTypenewsCodes.Tj_z3s,
+		cpType: TjsscType,
+		cpTypeName: CpTypeName[TjsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	tj_h3 := &multipleData{
+		packageA: dataTxtMapPackageA,
+		packageB: dataTxtMapPackageB,
+		code: cpTypenewsCodes.Tj_h3s,
+		cpType: TjsscType,
+		cpTypeName: CpTypeName[TjsscType],
+		position: "后3",
+		packet: packet,
+	}
+
 	tw_q3 := &multipleData{
 		packageA: dataTxtMapPackageA,
 		packageB: dataTxtMapPackageB,
@@ -296,15 +296,15 @@ func containMultipAnalysisCodes(packet *model.DoubleContinuity, cpTypenewsCodes 
 	go cq_z3.calculate()
 	go cq_h3.calculate()
 
-	go tj_q3.calculate()
-	go tj_z3.calculate()
-	go tj_h3.calculate()
-
 	go xj_q3.calculate()
 	go xj_z3.calculate()
 	go xj_h3.calculate()
 
 	/*
+	go tj_q3.calculate()
+	go tj_z3.calculate()
+	go tj_h3.calculate()
+
 	go tw_q3.calculate()
 	go tw_z3.calculate()
 	go tw_h3.calculate()
@@ -335,18 +335,6 @@ func getSsccodes(cyType int) ([]string, []string, []string)  {
 		}
 	}
 
-	//天津时时彩
-	if cyType == TjsscType {
-		for i := range contain_multiple_tj_data {
-			q3s := contain_multiple_tj_data[i].One + contain_multiple_tj_data[i].Two + contain_multiple_tj_data[i].Three
-			z3s := contain_multiple_tj_data[i].Two + contain_multiple_tj_data[i].Three + contain_multiple_tj_data[i].Four
-			h3s := contain_multiple_tj_data[i].Three + contain_multiple_tj_data[i].Four + contain_multiple_tj_data[i].Five
-			q3codes = append(q3codes, q3s)
-			z3codes = append(z3codes, z3s)
-			h3codes = append(h3codes, h3s)
-		}
-	}
-
 	//新疆时时彩
 	if cyType == XjsscType {
 		for i := range contain_multiple_xj_data {
@@ -360,6 +348,18 @@ func getSsccodes(cyType int) ([]string, []string, []string)  {
 	}
 
 	/*
+	//天津时时彩
+	if cyType == TjsscType {
+		for i := range contain_multiple_tj_data {
+			q3s := contain_multiple_tj_data[i].One + contain_multiple_tj_data[i].Two + contain_multiple_tj_data[i].Three
+			z3s := contain_multiple_tj_data[i].Two + contain_multiple_tj_data[i].Three + contain_multiple_tj_data[i].Four
+			h3s := contain_multiple_tj_data[i].Three + contain_multiple_tj_data[i].Four + contain_multiple_tj_data[i].Five
+			q3codes = append(q3codes, q3s)
+			z3codes = append(z3codes, z3s)
+			h3codes = append(h3codes, h3s)
+		}
+	}
+
 	//台湾时时彩
 	if cyType == TwsscType {
 		for i := range contain_multiple_tw_data {
@@ -396,24 +396,6 @@ func isRepeat(cyType int) bool {
 		return true
 	}
 
-	//天津
-	if cyType == TjsscType {
-		//获取本次查询的最新号码
-		if len(contain_multiple_tj_data) == 0 {
-			return false
-		}
-		index := len(contain_multiple_tj_data) - 1
-		newCode := contain_multiple_tj_data[index].One + contain_multiple_tj_data[index].Two + contain_multiple_tj_data[index].Three + contain_multiple_tj_data[index].Four + contain_multiple_tj_data[index].Five
-		//获取内存中最新的重新开奖号码
-		new_code := multipleNewCodes.Get(cyType)
-		if new_code == newCode {
-			return false
-		}
-		//刷新最新开奖号码
-		multipleNewCodes.Set(cyType, newCode)
-		return true
-	}
-
 	//新疆
 	if cyType == XjsscType {
 		//获取本次查询的最新号码
@@ -433,6 +415,24 @@ func isRepeat(cyType int) bool {
 	}
 
 	/*
+	//天津
+	if cyType == TjsscType {
+		//获取本次查询的最新号码
+		if len(contain_multiple_tj_data) == 0 {
+			return false
+		}
+		index := len(contain_multiple_tj_data) - 1
+		newCode := contain_multiple_tj_data[index].One + contain_multiple_tj_data[index].Two + contain_multiple_tj_data[index].Three + contain_multiple_tj_data[index].Four + contain_multiple_tj_data[index].Five
+		//获取内存中最新的重新开奖号码
+		new_code := multipleNewCodes.Get(cyType)
+		if new_code == newCode {
+			return false
+		}
+		//刷新最新开奖号码
+		multipleNewCodes.Set(cyType, newCode)
+		return true
+	}
+
 	//台湾
 	if cyType == TwsscType {
 		//获取本次查询的最新号码

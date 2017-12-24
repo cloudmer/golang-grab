@@ -17,14 +17,16 @@ var consecutive []*model.Alarm
 //重庆开奖数据
 var consecutive_cq_data []*model.Cqssc
 
-//重庆开奖数据
-var consecutive_tj_data []*model.Tjssc
-
-//重庆开奖数据
+//新疆开奖数据
 var consecutive_xj_data []*model.Xjssc
 
-//重庆开奖数据
+/*
+//天津开奖数据
+var consecutive_tj_data []*model.Tjssc
+
+//台湾开奖数据
 var consecutive_tw_data []*model.Twssc
+*/
 
 //连号
 var consecutiveNumbers map[string]string = make(map[string]string)
@@ -65,14 +67,16 @@ func Consecutive()  {
 	cqssc := new(model.Cqssc)
 	consecutive_cq_data = cqssc.Query("100")
 
-	tjssc := new(model.Tjssc)
-	consecutive_tj_data = tjssc.Query("100")
-
 	xjssc := new(model.Xjssc)
 	consecutive_xj_data = xjssc.Query("100")
 
+	/*
+	tjssc := new(model.Tjssc)
+	consecutive_tj_data = tjssc.Query("100")
+
 	twssc := new(model.Twssc)
 	consecutive_tw_data = twssc.Query("100")
+	*/
 
 	consecutiveAnalysis()
 }
@@ -92,9 +96,11 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 	}
 
 	cq_q3s, cq_z3s, cq_h3s := getCqCodes()
-	tj_q3s, tj_z3s, tj_h3s := getTjCodes()
 	xj_q3s, xj_z3s, xj_h3s := getXjCodes()
+	/*
+	tj_q3s, tj_z3s, tj_h3s := getTjCodes()
 	tw_q3s, tw_z3s, tw_h3s := getTwCodes()
+	*/
 
 	go func(config *model.Alarm) {
 		//重庆报警
@@ -121,6 +127,7 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 		}
 	}(config)
 
+	/*
 	go func(config *model.Alarm) {
 		//天津报警
 		var body string
@@ -145,6 +152,7 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 			mail.SendMail(CpTypeName[TjsscType] + " 连号", body)
 		}
 	}(config)
+	*/
 
 	go func(config *model.Alarm) {
 		//新疆报警
@@ -171,6 +179,7 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 		}
 	}(config)
 
+	/*
 	go func(config *model.Alarm) {
 		//台湾报警
 		var body string
@@ -195,6 +204,7 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 			mail.SendMail(CpTypeName[TwsscType] + " 连号", body)
 		}
 	}(config)
+	*/
 
 }
 
@@ -227,6 +237,7 @@ func getCqCodes() ([]string, []string, []string) {
 	return q3s, z3s, h3s
 }
 
+/*
 //获取天津 前中后的 开奖号码
 func getTjCodes() ([]string, []string, []string) {
 	q3s := make([]string, 0)
@@ -255,6 +266,7 @@ func getTjCodes() ([]string, []string, []string) {
 	}
 	return q3s, z3s, h3s
 }
+*/
 
 //获取新疆 前中后的 开奖号码
 func getXjCodes() ([]string, []string, []string) {
@@ -285,6 +297,7 @@ func getXjCodes() ([]string, []string, []string) {
 	return q3s, z3s, h3s
 }
 
+/*
 //获取台湾 前中后的 开奖号码
 func getTwCodes() ([]string, []string, []string) {
 	q3s := make([]string, 0)
@@ -313,6 +326,7 @@ func getTwCodes() ([]string, []string, []string) {
 	}
 	return q3s, z3s, h3s
 }
+*/
 
 func consecutiveCodesAnalyse(codes []string, position string, cpName string) (string, int) {
 	log_html := ""
