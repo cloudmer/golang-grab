@@ -185,7 +185,7 @@ func (c *computing) calculate()  {
 		// 是否在 c 包 【不在 ab 内就算c包】
 		in_c_package := false
 		if !in_a_package && !in_b_package {
-			in_a_package = true
+			in_c_package = true
 		}
 
 
