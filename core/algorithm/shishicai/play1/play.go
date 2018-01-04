@@ -164,7 +164,7 @@ func (c *computing) calculate()  {
 	
 	// 循环一次后 是否出现a 包
 	pre_a_show := false
-	// 循环一次后 是否出现c 包
+	// 循环一次后 是否出现b 包
 	pre_b_show := false
 	// 循环一次后 是否出现c 包
 	pre_c_show := false
@@ -188,7 +188,6 @@ func (c *computing) calculate()  {
 			in_c_package = true
 		}
 
-
 		// 上一期 出现a包 并且 本期 出现了b包 或 本期出现了c包
 		if pre_a_show && (in_b_package || in_c_package) {
 			continuity_b_number += 1
@@ -205,7 +204,7 @@ func (c *computing) calculate()  {
 		}
 
 		// 设置自定义连续几B, 开奖超出自定义连续几B 就算开奖 清零 并且本期 未出现c包 只有b包才能清零
-		if continuity_b_number > c.packet.ContinuityNumber && !in_c_package {
+		if continuity_b_number > c.packet.ContinuityNumber && !in_c_package && in_b_package && pre_b_show {
 			// 连续b 清零
 			continuity_b_number = 0
 			// 报警期数 清零
