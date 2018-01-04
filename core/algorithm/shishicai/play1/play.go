@@ -204,7 +204,7 @@ func (c *computing) calculate()  {
 		}
 
 		// 设置自定义连续几B, 开奖超出自定义连续几B 就算开奖 清零 并且本期 未出现c包 只有b包才能清零
-		if continuity_b_number > c.packet.ContinuityNumber && !in_c_package && in_b_package && pre_b_show {
+		if continuity_b_number > c.packet.ContinuityNumber && in_b_package {
 			// 连续b 清零
 			continuity_b_number = 0
 			// 报警期数 清零
