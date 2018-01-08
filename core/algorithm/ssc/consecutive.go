@@ -405,8 +405,10 @@ func consecutiveCodesAnalyse(codes []string, position string, cpName string) (st
 
 	//最新的一期号码 的 有上一期的参考对象 才报警
 	if reference != "" {
+		log_html = ""
 		return log_html, number
 	}
+	log_html = ""
 	return log_html, 0
 }
 
