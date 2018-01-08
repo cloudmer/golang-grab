@@ -262,7 +262,7 @@ func (c *computing) calculate()  {
 	}
 
 	// 最新的一期 包含 c 包 或者包含 b包 并且 达到报警期数
-	if (pre_b_show || pre_c_show) && number >= c.packet.Number {
+	if pre_a_show && (pre_b_show || pre_c_show) && number >= c.packet.Number {
 		emailTitle := "<div>a出现几期的b 设置的连续"+ strconv.Itoa(c.packet.ContinuityNumber) +"B 报警"+ " 彩种: "+ c.cpTypeName + " 位置: "+ c.position + " 包别名: "+ c.packet.Alias +" 报警 ["+ strconv.Itoa(number) +"]期 提示</div> <br/><br/>"
 		emailTitle += strHtmlLog
 		go mail.SendMail(c.cpTypeName + "a出现几期的b", emailTitle)
