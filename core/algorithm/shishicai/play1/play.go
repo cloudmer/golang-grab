@@ -161,16 +161,21 @@ func (c *computing) calculate()  {
 		//fmt.Println("a出现几期的b", c.packet.Alias, c.cpTypeName , c.position , "等待出现最新的号码")
 		return
 	}
-	
-	// 循环一次后 是否出现a 包
+
+	// 循环的上一期 是否出现a包
 	pre_a_show := false
-	// 循环一次后 是否出现b 包
+
+	// 循环的上一期 是否出现b包
 	pre_b_show := false
-	// 循环一次后 是否出现c 包
+
+	// 循环的上一期 是否出现c包
 	pre_c_show := false
 
-	// 连续出现自定义几期b 计数器
-	continuity_b_number := 0
+	// a 包出现后才能计算
+	a_show := false
+
+	// a 包出现后 几期了 还没出现a包
+	a_show_after_num := 0
 
 	// 报警期数 计数器
 	number := 0
@@ -188,30 +193,39 @@ func (c *computing) calculate()  {
 			in_c_package = true
 		}
 
-		// 上一期 出现a包 并且 本期 出现了b包 或 本期出现了c包
-		if pre_a_show && (in_b_package || in_c_package) {
-			continuity_b_number += 1
+		// a包出现后 已经有n期没出现a包了
+		if a_show && !in_a_package {
+			a_show_after_num += 1
 		}
 
-		// 上一期出现c包 或者 上一期出现b 包 并且 本期出现c包 或者 本期出现 b包
-		if (pre_c_show || pre_b_show) && (in_c_package || in_b_package) {
-			continuity_b_number += 1
+		// a包出现后 还未等到 重新等待一下a包
+		if a_show && in_a_package {
+			// 本期不做任何计算
+			a_show = false
+			// a包出现后 开了几期bc包了 清零 因为又出现a包了
+			a_show_after_num = 0
 		}
 
 		// 累加连续b 已经达到 了自定义几b 值 报警期数 + 1
-		if continuity_b_number == c.packet.ContinuityNumber {
+		if a_show_after_num == c.packet.ContinuityNumber {
 			number += 1
 		}
 
-		// 设置自定义连续几B, 开奖超出自定义连续几B 就算开奖 清零 并且本期 未出现c包 只有b包才能清零
-		if continuity_b_number > c.packet.ContinuityNumber && in_b_package {
-			// 连续b 清零
-			continuity_b_number = 0
-			// 报警期数 清零
-			number = 0
+		// 当到了 设置到连续n b后的再一期 就要等到下一个a出现再计算
+		if a_show_after_num == c.packet.ContinuityNumber + 1 {
+			// 本期包含b包 算开 一切清零
+			if in_b_package {
+				number = 0
+			}
+
+			// 等待下一个a包出现
+			a_show = false
+			// a包出现后已经连续几次出bc包了 清零
+			a_show_after_num = 0
 		}
 
 		strHtmlLog += "<div>开奖号: </div>" + c.code[i] + "<br/>"
+		strHtmlLog += "<div>a出现后 几期了: " + strconv.Itoa(a_show_after_num)+ "</div>"
 		strHtmlLog += "<div>上一期包含A包吗: " + strconv.FormatBool(pre_a_show) + "</div>"
 		strHtmlLog += "<div>上一期包含B包吗: " + strconv.FormatBool(pre_b_show) + "</div>"
 		strHtmlLog += "<div>上一期包含C包吗: " + strconv.FormatBool(pre_c_show) + "</div>"
@@ -219,22 +233,31 @@ func (c *computing) calculate()  {
 		strHtmlLog += "<div>本期包含A包吗: " + strconv.FormatBool(in_a_package) + "</div>"
 		strHtmlLog += "<div>本期包含B包吗: " + strconv.FormatBool(in_b_package) + "</div>"
 		strHtmlLog += "<div>本期包含C包吗: " + strconv.FormatBool(in_c_package) + "</div>"
-		strHtmlLog += "<div>设置的连续 " + strconv.Itoa(c.packet.ContinuityNumber) + " B 已经累加到 " + strconv.Itoa(continuity_b_number) + "</div>"
+		strHtmlLog += "<div>设置的连续 " + strconv.Itoa(c.packet.ContinuityNumber) + " B 已经累加到 " + strconv.Itoa(a_show_after_num) + "</div>"
 		strHtmlLog += "<div>报警期数累加到 " + strconv.Itoa(number) + "</div><br/>"
 
-		// 本次循环执行完后 再更新 本期是否出现了a 包
+		// 本期包含a包 a包允许计算开始
 		if in_a_package {
+			a_show = true
+			a_show_after_num = 0
 			pre_a_show = true
+		}else {
+			pre_a_show = false
 		}
+
 
 		// 本次循环执行完后 再更新 本期是否出现了b 包
 		if in_b_package {
 			pre_b_show = true
+		}else {
+			pre_b_show = false
 		}
 
 		// 本次循环执行完后 再更新 本期是否出现了c 包
 		if in_c_package {
 			pre_c_show = true
+		}else {
+			pre_c_show = false
 		}
 	}
 
