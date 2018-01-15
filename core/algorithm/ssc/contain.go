@@ -21,10 +21,10 @@ var contain_cq_data []*model.Cqssc
 //新疆开奖数据
 var contain_xj_data []*model.Xjssc
 
-/*
 //天津开奖数据
 var contain_tj_data []*model.Tjssc
 
+/*
 //台湾开奖数据
 var contain_tw_data []*model.Twssc
 */
@@ -67,10 +67,10 @@ func Contain()  {
 	xjssc := new(model.Xjssc)
 	contain_xj_data = xjssc.Query("300")
 
-	/*
 	tjssc := new(model.Tjssc)
 	contain_tj_data = tjssc.Query("300")
 
+	/*
 	twssc := new(model.Twssc)
 	contain_tw_data = twssc.Query("300")
 	*/
@@ -144,7 +144,6 @@ func containAnalysisCodes(packet *model.Packet)  {
 		}
 	}
 
-	/*
 	//天津时时彩
 	if packet.Type == 2 && len(contain_tj_data) > 0 {
 		//检查 该彩种到最新的一期 是否重复分析
@@ -165,6 +164,7 @@ func containAnalysisCodes(packet *model.Packet)  {
 		}
 	}
 
+	/*
 	//台湾时时彩
 	if packet.Type == 4 && len(contain_tw_data) > 0 {
 		//检查 该彩种到最新的一期 是否重复分析

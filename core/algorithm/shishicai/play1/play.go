@@ -33,12 +33,16 @@ func Calculation()  {
 	xjscc := new(model.Xjssc)
 	xjCodes = xjscc.Query("200")
 
+	tjssc := new(model.Tjssc)
+	tjCodes = tjssc.Query("200")
+
 	//获取数据包
 	cPackage := new(model.Play1)
 	configPackage := cPackage.Query()
 
 	cq_q3s, cq_z3s, cq_h3s := getFrontCenterAfterCodes(cqsscType)
 	xj_q3s, xj_z3s, xj_h3s := getFrontCenterAfterCodes(xjsscType)
+	tj_q3s, tj_z3s, tj_h3s := getFrontCenterAfterCodes(tjsscType)
 
 	allCodes := &allCpCodes{
 		cq_q3s: cq_q3s,
@@ -48,6 +52,10 @@ func Calculation()  {
 		xj_q3s: xj_q3s,
 		xj_z3s: xj_z3s,
 		xj_h3s: xj_h3s,
+
+		tj_q3s: tj_q3s,
+		tj_z3s: tj_z3s,
+		tj_h3s: tj_h3s,
 	}
 
 	for i := range configPackage {
@@ -146,6 +154,39 @@ func analysis(packet *model.Play1, allCodes *allCpCodes)  {
 		packet: packet,
 	}
 
+	//天津前3
+	tj_q3 := &computing{
+		packet_a_map: dataTxtMapPackageA,
+		packet_b_map: dataTxtMapPackageB,
+		code: allCodes.tj_q3s,
+		cpType: tjsscType,
+		cpTypeName: cpTypeName[tjsscType],
+		position: "前3",
+		packet: packet,
+	}
+
+	//天津中3
+	tj_z3 := &computing{
+		packet_a_map: dataTxtMapPackageA,
+		packet_b_map: dataTxtMapPackageB,
+		code: allCodes.tj_z3s,
+		cpType: tjsscType,
+		cpTypeName: cpTypeName[tjsscType],
+		position: "中3",
+		packet: packet,
+	}
+
+	//天津后3
+	tj_h3 := &computing{
+		packet_a_map: dataTxtMapPackageA,
+		packet_b_map: dataTxtMapPackageB,
+		code: allCodes.tj_h3s,
+		cpType: tjsscType,
+		cpTypeName: cpTypeName[tjsscType],
+		position: "后3",
+		packet: packet,
+	}
+
 	go cq_q3.calculate()
 	go cq_z3.calculate()
 	go cq_h3.calculate()
@@ -153,6 +194,10 @@ func analysis(packet *model.Play1, allCodes *allCpCodes)  {
 	go xj_q3.calculate()
 	go xj_z3.calculate()
 	go xj_h3.calculate()
+
+	go tj_q3.calculate()
+	go tj_z3.calculate()
+	go tj_h3.calculate()
 }
 
 //计算分析

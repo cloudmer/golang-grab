@@ -35,10 +35,8 @@ func Calculation()  {
 	xjscc := new(model.Xjssc)
 	xjCodes = xjscc.Query("200")
 
-	/*
 	tjssc := new(model.Tjssc)
 	tjCodes = tjssc.Query("200")
-	*/
 
 	//获取数据包
 	cPackage := new(model.CustomPackage)
@@ -47,7 +45,7 @@ func Calculation()  {
 	//先获取 前中后的开奖号码 再遍历 就可以判断是否属于重复分析
 	cq_q3s, cq_z3s, cq_h3s := getFrontCenterAfterCodes(cqsscType)
 	xj_q3s, xj_z3s, xj_h3s := getFrontCenterAfterCodes(xjsscType)
-	//tj_q3s, tj_z3s, tj_h3s := getFrontCenterAfterCodes(tjsscType)
+	tj_q3s, tj_z3s, tj_h3s := getFrontCenterAfterCodes(tjsscType)
 
 	allCodes := &allCpCodes{
 		cq_q3s: cq_q3s,
@@ -58,11 +56,9 @@ func Calculation()  {
 		xj_z3s: xj_z3s,
 		xj_h3s: xj_h3s,
 
-		/*
 		tj_q3s: tj_q3s,
 		tj_z3s: tj_z3s,
 		tj_h3s: tj_h3s,
-		*/
 	}
 
 	for i := range configPackage {
@@ -148,7 +144,6 @@ func analysis(packet *model.CustomPackage, allCodes *allCpCodes)  {
 		packet: packet,
 	}
 
-	/*
 	//天津前3
 	tj_q3 := &computing{
 		packet_map: dataTxtMapPackage,
@@ -178,7 +173,6 @@ func analysis(packet *model.CustomPackage, allCodes *allCpCodes)  {
 		position: "后3",
 		packet: packet,
 	}
-	 */
 
 	go cq_q3.calculate()
 	go cq_z3.calculate()
@@ -188,11 +182,9 @@ func analysis(packet *model.CustomPackage, allCodes *allCpCodes)  {
 	go xj_z3.calculate()
 	go xj_h3.calculate()
 
-	/*
 	go tj_q3.calculate()
 	go tj_z3.calculate()
 	go tj_h3.calculate()
-	 */
 }
 
 //计算分析
@@ -356,7 +348,6 @@ func getFrontCenterAfterCodes(cpType int) ([]string, []string, []string) {
 		}
 	}
 
-	/*
 	//天津时时彩
 	if cpType == tjsscType {
 		for i := range tjCodes {
@@ -368,7 +359,6 @@ func getFrontCenterAfterCodes(cpType int) ([]string, []string, []string) {
 			h3codes = append(h3codes, h3s)
 		}
 	}
-	 */
 
 	return q3codes, z3codes, h3codes
 }
@@ -402,7 +392,6 @@ func isRepeat(cpType int) bool {
 		newCode = xjCodes[index].One + xjCodes[index].Two + xjCodes[index].Three + xjCodes[index].Four + xjCodes[index].Five
 	}
 
-	/*
 	//天津时时彩
 	if cpType == tjsscType {
 		//获取本次查询的最新号码
@@ -412,7 +401,6 @@ func isRepeat(cpType int) bool {
 		index := len(tjCodes) - 1
 		newCode = tjCodes[index].One + tjCodes[index].Two + tjCodes[index].Three + tjCodes[index].Four + tjCodes[index].Five
 	}
-	 */
 
 	//获取内存中最新的重新开奖号码
 	new_code = newsCode.Get(cpType)
