@@ -384,6 +384,16 @@ func isRepeat(cpType int) bool {
 		newCode = xjCodes[index].One + xjCodes[index].Two + xjCodes[index].Three + xjCodes[index].Four + xjCodes[index].Five
 	}
 
+	// 天津时时彩
+	if cpType == tjsscType {
+		//获取本次查询的最新号码
+		if len(tjCodes) == 0 {
+			return false
+		}
+		index := len(tjCodes) - 1
+		newCode = tjCodes[index].One + tjCodes[index].Two + tjCodes[index].Three + tjCodes[index].Four + tjCodes[index].Five
+	}
+
 	//获取内存中最新的重新开奖号码
 	new_code = newsCode.Get(cpType)
 	if new_code == newCode {
