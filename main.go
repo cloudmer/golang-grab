@@ -17,7 +17,7 @@ func main(){
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	for {
 		select {
-		case <-time.After(1 * time.Second):
+		case <-time.After(1 * time.Minute):
 			//todo
 			// 时时彩　包含数据包　算法　邮件报警
 			go ssc.Contain()
