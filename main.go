@@ -9,6 +9,7 @@ import (
 	"os"
 	"xmn/core/algorithm/shishicai/CustomPackage"
 	"xmn/core/algorithm/shishicai/play1"
+	"xmn/core/algorithm/shishicai/play2"
 )
 
 func main(){
@@ -28,6 +29,8 @@ func main(){
 			go CustomPackage.Calculation()
 			// 时时彩 a出现几期的b
 			go play1.Calculation()
+			// 时时彩 间隔几连号
+			go play2.Consecutive()
 		}
 	}
 }
