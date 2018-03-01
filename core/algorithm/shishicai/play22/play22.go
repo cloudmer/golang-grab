@@ -12,7 +12,7 @@ import (
 	"fmt"
 )
 
-var consecutive []*model.Alarm
+var consecutive []*model.Play22
 
 //重庆开奖数据
 var consecutive_cq_data []*model.Cqssc
@@ -61,8 +61,8 @@ func init()  {
 // 时时彩 连号算法 连号 01 12 23 34 45 56 78 89 90 视为连号
 func Consecutive()  {
 	fmt.Println("时时彩 - 2连1站报警 算法")
-	alarm := new(model.Alarm)
-	consecutive = alarm.Query(model.AlarmConsecutive)
+	alarm := new(model.Play22)
+	consecutive = alarm.Query(model.Play22Consecutive)
 
 	cqssc := new(model.Cqssc)
 	consecutive_cq_data = cqssc.Query("100")
@@ -89,7 +89,7 @@ func consecutiveAnalysis()  {
 	}
 }
 
-func consecutiveAnalysisCodes(config *model.Alarm)  {
+func consecutiveAnalysisCodes(config *model.Play22)  {
 	//检查是否在报警时间段以内
 	if (config.Start >0 && config.End >0) && (time.Now().Hour() < config.Start || time.Now().Hour() > config.End)  {
 		log.Println("时时彩-2连1站报警 报警通知非接受时间段内")
@@ -104,19 +104,19 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 	tw_q3s, tw_z3s, tw_h3s := getTwCodes()
 	*/
 
-	go func(config *model.Alarm) {
+	go func(config *model.Play22) {
 		//重庆报警
 		var body string
 		q3_log_html, q3_num := consecutiveCodesAnalyse(cq_q3s, "前三", CpTypeName[CqsscType])
 		z3_log_html, z3_num := consecutiveCodesAnalyse(cq_z3s, "中三", CpTypeName[CqsscType])
 		h3_log_html, h3_num := consecutiveCodesAnalyse(cq_h3s, "后三", CpTypeName[CqsscType])
-		if q3_num >= config.Number {
+		if q3_num == config.Number {
 			body += "<div> 彩种: " + CpTypeName[CqsscType] + " 2连1站 报警提示 位置: 前三 期数: "+ strconv.Itoa(q3_num) + "</div>"
 		}
-		if z3_num >= config.Number {
+		if z3_num == config.Number {
 			body += "<div> 彩种: " + CpTypeName[CqsscType] + " 2连1站 报警提示 位置: 中三 期数: "+ strconv.Itoa(z3_num) + "</div>"
 		}
-		if h3_num >= config.Number {
+		if h3_num == config.Number {
 			body += "<div> 彩种: " + CpTypeName[CqsscType] + " 2连1站 报警提示 位置: 后三 期数: "+ strconv.Itoa(h3_num) + "</div>"
 		}
 		body += q3_log_html
@@ -130,7 +130,7 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 	}(config)
 
 	/*
-	go func(config *model.Alarm) {
+	go func(config *model.Play22) {
 		//天津报警
 		var body string
 		q3_log_html, q3_num := consecutiveCodesAnalyse(tj_q3s, "前三", CpTypeName[TjsscType])
@@ -156,19 +156,19 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 	}(config)
 	*/
 
-	go func(config *model.Alarm) {
+	go func(config *model.Play22) {
 		//新疆报警
 		var body string
 		q3_log_html, q3_num := consecutiveCodesAnalyse(xj_q3s, "前三", CpTypeName[XjsscType])
 		z3_log_html, z3_num := consecutiveCodesAnalyse(xj_z3s, "中三", CpTypeName[XjsscType])
 		h3_log_html, h3_num := consecutiveCodesAnalyse(xj_h3s, "后三", CpTypeName[XjsscType])
-		if q3_num >= config.Number {
+		if q3_num == config.Number {
 			body += "<div> 彩种: " + CpTypeName[XjsscType] + " 2连1站 报警提示 位置: 前三 期数: "+ strconv.Itoa(q3_num) + "</div>"
 		}
-		if z3_num >= config.Number {
+		if z3_num == config.Number {
 			body += "<div> 彩种: " + CpTypeName[XjsscType] + " 2连1站 报警提示 位置: 中三 期数: "+ strconv.Itoa(z3_num) + "</div>"
 		}
-		if h3_num >= config.Number {
+		if h3_num == config.Number {
 			body += "<div> 彩种: " + CpTypeName[XjsscType] + " 2连1站 报警提示 位置: 后三 期数: "+ strconv.Itoa(h3_num) + "</div>"
 		}
 		body += q3_log_html
@@ -182,7 +182,7 @@ func consecutiveAnalysisCodes(config *model.Alarm)  {
 	}(config)
 
 	/*
-	go func(config *model.Alarm) {
+	go func(config *model.Play22) {
 		//台湾报警
 		var body string
 		q3_log_html, q3_num := consecutiveCodesAnalyse(tw_q3s, "前三", CpTypeName[TwsscType])
