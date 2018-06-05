@@ -339,6 +339,10 @@ func consecutiveCodesAnalyse(codes []string, position string, cpName string) (st
 
 		//该号码是否是组六
 		isSix := IsSix(codes[i])
+		if isSix == false {
+			//不是组6 跳出本次循环
+			continue
+		}
 
 		//排序
 		code := CodeSort(codes[i], "asc")
@@ -348,14 +352,14 @@ func consecutiveCodesAnalyse(codes []string, position string, cpName string) (st
 
 		//fmt.Println("开奖号:", codes[i], "排序后:", code, position, cpName, "是否是组6", isSix)
 
-		if isSix == false {
-			log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 不是组6 [不管] 期数 = " + strconv.Itoa(number)
-			//不是组6 跳出本次循环
-
-			//当前轮循完 刷新下一期的 参考对象
-			reference = reference_current_obj
-			continue
-		}
+		//if isSix == false {
+		//	log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 不是组6 [不管] 期数 = " + strconv.Itoa(number)
+		//	//不是组6 跳出本次循环
+		//
+		//	//当前轮循完 刷新下一期的 参考对象
+		//	reference = reference_current_obj
+		//	continue
+		//}
 
 		//检查上一期是否有参考对象
 		if reference != "" {
