@@ -344,6 +344,10 @@ func consecutiveCodesAnalyse(codes []string, position string, cpName string) (st
 		code_is_six = isSix
 		if isSix == false {
 			//不是组6 跳出本次循环
+			//排序
+			code := CodeSort(codes[i], "asc")
+			//检查本期号码 是否有连号
+			reference = isConsecutiveNumber(code)
 			continue
 		}
 
