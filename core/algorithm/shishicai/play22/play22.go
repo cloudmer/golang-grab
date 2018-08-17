@@ -335,7 +335,14 @@ func consecutiveCodesAnalyse(codes []string, position string, cpName string) (st
 	//参考对象
 	var reference string = ""
 	var number int = 0
+
+	// 上一期开奖号
+	var pre_code string
+
 	for i := range codes {
+		if i != 0 {
+			pre_code = codes[i-1]
+		}
 
 		//该号码是否是组六
 		isSix := IsSix(codes[i])
@@ -365,15 +372,26 @@ func consecutiveCodesAnalyse(codes []string, position string, cpName string) (st
 
 			//上一期出现了 连号 并且 本期号码 包含上一期连号 其中的1位 清零 并且本期也出现了连号 + 1
 			if isContain == 1 && reference_current_obj != "" {
-				number = 0
-				number += 1
-				log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 上期参考对象: " + reference + " 上期出现连号 并且 本期包含上期连号其中1位 并且 本期出现连号 清0 再 +1 期数 = " + strconv.Itoa(number) + "</div>"
+				// 检查上一期 是否是组三
+				if pre_code != "" && !IsSix(pre_code) {
+					// 如果上一期是组三 且出现连号 本期 只加一 不清零
+					number += 1
+					log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 上期参考对象: " + reference + " 上期出现连号 并且 上期是组三 并且 本期包含上期连号其中1位 并且 本期出现连号 +1 期数 = " + strconv.Itoa(number) + "</div>"
+				} else {
+					number = 0
+					number += 1
+					log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 上期参考对象: " + reference + " 上期出现连号 并且 本期包含上期连号其中1位 并且 本期出现连号 清0 再 +1 期数 = " + strconv.Itoa(number) + "</div>"
+				}
 			}
 
 			//上一期出现了 连号 并且 本期号码 包含上一期连号 其中的1位 清零 并且本期未出现连号
 			if isContain == 1 && reference_current_obj == "" {
-				number = 0
-				log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 上期参考对象: " + reference + " 上期出现连号 并且 本期包含上期连号其中1位 并且 本期未出现连号 清0 期数 = " + strconv.Itoa(number) + "</div>"
+				if pre_code != "" && !IsSix(pre_code) {
+					log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 上期参考对象: " + reference + " 上期出现连号 并且 上一期是 组三 并且 本期包含上期连号其中1位 并且 本期未出现连号 不清0 期数 = " + strconv.Itoa(number) + "</div>"
+				} else {
+					number = 0
+					log_html += "<div> 彩种:"+ cpName +" 开奖号: " + codes[i] + " 排序后 " + code + " 位置: " + position + " 上期参考对象: " + reference + " 上期出现连号 并且 本期包含上期连号其中1位 并且 本期未出现连号 清0 期数 = " + strconv.Itoa(number) + "</div>"
+				}
 			}
 
 			//上一期出现了 连号 并且 本期号码 未包含上一期连号 其中的1位 不管 并且本期出现连号 + 1
