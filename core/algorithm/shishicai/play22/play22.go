@@ -110,13 +110,13 @@ func consecutiveAnalysisCodes(config *model.Play22)  {
 		q3_log_html, q3_num := consecutiveCodesAnalyse(cq_q3s, "前三", CpTypeName[CqsscType])
 		z3_log_html, z3_num := consecutiveCodesAnalyse(cq_z3s, "中三", CpTypeName[CqsscType])
 		h3_log_html, h3_num := consecutiveCodesAnalyse(cq_h3s, "后三", CpTypeName[CqsscType])
-		if q3_num == config.Number {
+		if q3_num >= config.Number {
 			body += "<div> 彩种: " + CpTypeName[CqsscType] + " 2连1站 报警提示 位置: 前三 期数: "+ strconv.Itoa(q3_num) + "</div>"
 		}
-		if z3_num == config.Number {
+		if z3_num >= config.Number {
 			body += "<div> 彩种: " + CpTypeName[CqsscType] + " 2连1站 报警提示 位置: 中三 期数: "+ strconv.Itoa(z3_num) + "</div>"
 		}
-		if h3_num == config.Number {
+		if h3_num >= config.Number {
 			body += "<div> 彩种: " + CpTypeName[CqsscType] + " 2连1站 报警提示 位置: 后三 期数: "+ strconv.Itoa(h3_num) + "</div>"
 		}
 		body += q3_log_html
@@ -162,13 +162,13 @@ func consecutiveAnalysisCodes(config *model.Play22)  {
 		q3_log_html, q3_num := consecutiveCodesAnalyse(xj_q3s, "前三", CpTypeName[XjsscType])
 		z3_log_html, z3_num := consecutiveCodesAnalyse(xj_z3s, "中三", CpTypeName[XjsscType])
 		h3_log_html, h3_num := consecutiveCodesAnalyse(xj_h3s, "后三", CpTypeName[XjsscType])
-		if q3_num == config.Number {
+		if q3_num >= config.Number {
 			body += "<div> 彩种: " + CpTypeName[XjsscType] + " 2连1站 报警提示 位置: 前三 期数: "+ strconv.Itoa(q3_num) + "</div>"
 		}
-		if z3_num == config.Number {
+		if z3_num >= config.Number {
 			body += "<div> 彩种: " + CpTypeName[XjsscType] + " 2连1站 报警提示 位置: 中三 期数: "+ strconv.Itoa(z3_num) + "</div>"
 		}
-		if h3_num == config.Number {
+		if h3_num >= config.Number {
 			body += "<div> 彩种: " + CpTypeName[XjsscType] + " 2连1站 报警提示 位置: 后三 期数: "+ strconv.Itoa(h3_num) + "</div>"
 		}
 		body += q3_log_html
